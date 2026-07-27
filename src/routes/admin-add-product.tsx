@@ -137,7 +137,7 @@ function AddProductPage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-admin-token": "vmsol-admin-token-xyz-123"
+          "x-admin-token": sessionStorage.getItem("admin-token") || "vmsol-admin-token-xyz-123"
         },
         body: JSON.stringify(finalProduct),
       });
