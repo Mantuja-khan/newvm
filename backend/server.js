@@ -52,15 +52,26 @@ app.use(
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
+// Static frontend build and public asset paths
+const outputPublicPath = path.join(__dirname, "..", ".output", "public");
+const distPath = path.join(__dirname, "..", "dist");
+const publicPath = path.join(__dirname, "..", "public");
+
 // Favicon Explicit Safe Handler (Prevents 500 Internal Server Errors)
 app.get(["/favicon.ico", "/favicon.png"], (req, res) => {
-  const publicFavicon = path.join(__dirname, "..", "public", "favicon.ico");
-  if (fs.existsSync(publicFavicon)) {
-    return res.sendFile(publicFavicon);
-  }
-  const distFavicon = path.join(__dirname, "..", "dist", "favicon.ico");
-  if (fs.existsSync(distFavicon)) {
-    return res.sendFile(distFavicon);
+  const candidates = [
+    path.join(outputPublicPath, "favicon.ico"),
+    path.join(distPath, "favicon.ico"),
+    path.join(publicPath, "favicon.ico"),
+    path.join(outputPublicPath, "favicon.png"),
+    path.join(distPath, "favicon.png"),
+    path.join(publicPath, "favicon.png"),
+  ];
+
+  for (const fav of candidates) {
+    if (fs.existsSync(fav)) {
+      return res.sendFile(fav);
+    }
   }
   return res.status(204).end();
 });
@@ -102,36 +113,37 @@ app.use("/api/pricing", pricingRoutes);
 app.use("/api/reviews", reviewsRoutes);
 app.use("/api/contact", contactRoutes);
 
-// Static frontend build and public assets serving for VPS
-const distPath = path.join(__dirname, "..", "dist");
-const publicPath = path.join(__dirname, "..", "public");
-
-if (fs.existsSync(publicPath)) {
-  app.use(express.static(publicPath));
+// Register static file directories
+if (fs.existsSync(outputPublicPath)) {
+  app.use(express.static(outputPublicPath));
 }
 
 if (fs.existsSync(distPath)) {
   app.use(express.static(distPath));
 }
 
-// Fallback SPA routing for frontend URLs
+if (fs.existsSync(publicPath)) {
+  app.use(express.static(publicPath));
+}
+
+// Fallback SPA routing for frontend URLs (Prevents 500 error on page reload)
 app.get("*", (req, res, next) => {
   if (req.path.startsWith("/api")) return next();
 
-  const distIndex = path.join(distPath, "index.html");
-  if (fs.existsSync(distIndex)) {
-    return res.sendFile(distIndex, (err) => {
-      if (err && !res.headersSent) {
-        const rootIndex = path.join(__dirname, "..", "index.html");
-        if (fs.existsSync(rootIndex)) return res.sendFile(rootIndex);
-        return res.status(200).send("<!DOCTYPE html><html><head><title>VM Solutiions</title></head><body><div id='root'></div></body></html>");
-      }
-    });
-  }
+  const candidates = [
+    path.join(outputPublicPath, "index.html"),
+    path.join(distPath, "index.html"),
+    path.join(__dirname, "..", "index.html"),
+  ];
 
-  const rootIndex = path.join(__dirname, "..", "index.html");
-  if (fs.existsSync(rootIndex)) {
-    return res.sendFile(rootIndex);
+  for (const indexPath of candidates) {
+    if (fs.existsSync(indexPath)) {
+      return res.sendFile(indexPath, (err) => {
+        if (err && !res.headersSent) {
+          return res.status(200).send("<!DOCTYPE html><html><head><title>VM Solutiions</title></head><body><div id='root'></div></body></html>");
+        }
+      });
+    }
   }
 
   return res.status(200).send("<!DOCTYPE html><html><head><title>VM Solutiions</title></head><body><div id='root'></div></body></html>");
