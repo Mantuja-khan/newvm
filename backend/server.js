@@ -23,7 +23,7 @@ dotenv.config({ path: path.join(__dirname, "..", ".env") });
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// CORS configuration for local development and production VPS (vmsolutiions.com)
+// CORS configuration for local development and production VPS (vmsolutiions.com & api.vmsolutiions.com)
 const allowedOrigins = [
   "http://localhost:8080",
   "http://localhost:5001",
@@ -32,12 +32,14 @@ const allowedOrigins = [
   "https://vmsolutiions.com",
   "http://www.vmsolutiions.com",
   "https://www.vmsolutiions.com",
+  "http://api.vmsolutiions.com",
+  "https://api.vmsolutiions.com",
 ];
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps, curl, postman, or same-domain production requests)
+      // Allow requests with no origin (mobile apps, curl, postman, or same-domain production requests)
       if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV !== "production") {
         return callback(null, true);
       }
@@ -75,7 +77,7 @@ app.get("/api/health", (req, res) => {
   res.json({
     status: "OK",
     dbConnected: mongoose.connection.readyState === 1,
-    domain: "vmsolutiions.com",
+    domain: "api.vmsolutiions.com",
     timestamp: new Date().toISOString(),
   });
 });
@@ -104,7 +106,7 @@ app.use(errorHandler);
 connectDB().then(() => {
   app.listen(PORT, () => {
     console.log(`🚀 VM Solutiions Backend running on port ${PORT}`);
-    console.log(`🌐 Production Domain: https://vmsolutiions.com`);
+    console.log(`🌐 API Domain: https://api.vmsolutiions.com/api`);
     console.log(`🍃 MongoDB Connection: ${mongoose.connection.readyState === 1 ? "CONNECTED (Active)" : "Connecting..."}`);
   });
 });

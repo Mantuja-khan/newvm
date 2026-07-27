@@ -1,4 +1,4 @@
-// Dynamic API Base URL Configurator for Local & Production VPS (vmsolutiions.com)
+// Dynamic API Base URL Configurator for Local & Production VPS (api.vmsolutiions.com)
 export const getApiBaseUrl = (): string => {
   if (import.meta.env.VITE_API_URL) {
     return import.meta.env.VITE_API_URL.replace(/\/$/, "");
@@ -7,8 +7,8 @@ export const getApiBaseUrl = (): string => {
   if (typeof window !== "undefined") {
     const host = window.location.hostname;
     if (host !== "localhost" && host !== "127.0.0.1") {
-      // In production on vmsolutiions.com, route API via relative /api endpoint
-      return `${window.location.protocol}//${window.location.host}/api`;
+      // In production on vmsolutiions.com, route API via subdomain https://api.vmsolutiions.com/api
+      return `${window.location.protocol}//api.vmsolutiions.com/api`;
     }
   }
 
