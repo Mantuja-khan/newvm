@@ -52,6 +52,19 @@ app.use(
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
+// Favicon Explicit Safe Handler (Prevents 500 Internal Server Errors)
+app.get(["/favicon.ico", "/favicon.png"], (req, res) => {
+  const publicFavicon = path.join(__dirname, "..", "public", "favicon.ico");
+  if (fs.existsSync(publicFavicon)) {
+    return res.sendFile(publicFavicon);
+  }
+  const distFavicon = path.join(__dirname, "..", "dist", "favicon.ico");
+  if (fs.existsSync(distFavicon)) {
+    return res.sendFile(distFavicon);
+  }
+  return res.status(204).end();
+});
+
 // MongoDB Connection Status Route
 app.get("/api/db-status", (req, res) => {
   const state = mongoose.connection.readyState;
@@ -89,15 +102,40 @@ app.use("/api/pricing", pricingRoutes);
 app.use("/api/reviews", reviewsRoutes);
 app.use("/api/contact", contactRoutes);
 
-// Static frontend build serving (for standalone VPS single-port hosting)
+// Static frontend build and public assets serving for VPS
 const distPath = path.join(__dirname, "..", "dist");
+const publicPath = path.join(__dirname, "..", "public");
+
+if (fs.existsSync(publicPath)) {
+  app.use(express.static(publicPath));
+}
+
 if (fs.existsSync(distPath)) {
   app.use(express.static(distPath));
-  app.get("*", (req, res, next) => {
-    if (req.path.startsWith("/api")) return next();
-    res.sendFile(path.join(distPath, "index.html"));
-  });
 }
+
+// Fallback SPA routing for frontend URLs
+app.get("*", (req, res, next) => {
+  if (req.path.startsWith("/api")) return next();
+
+  const distIndex = path.join(distPath, "index.html");
+  if (fs.existsSync(distIndex)) {
+    return res.sendFile(distIndex, (err) => {
+      if (err && !res.headersSent) {
+        const rootIndex = path.join(__dirname, "..", "index.html");
+        if (fs.existsSync(rootIndex)) return res.sendFile(rootIndex);
+        return res.status(200).send("<!DOCTYPE html><html><head><title>VM Solutiions</title></head><body><div id='root'></div></body></html>");
+      }
+    });
+  }
+
+  const rootIndex = path.join(__dirname, "..", "index.html");
+  if (fs.existsSync(rootIndex)) {
+    return res.sendFile(rootIndex);
+  }
+
+  return res.status(200).send("<!DOCTYPE html><html><head><title>VM Solutiions</title></head><body><div id='root'></div></body></html>");
+});
 
 // Error Handler
 app.use(errorHandler);
