@@ -38,22 +38,19 @@ function SoftwareDetailPage() {
         const res = await fetch(`${API_BASE}/products/${id}`);
         if (res.ok) {
           const data = await res.json();
-          setProduct(data);
-        } else {
-          // Client-side fallback search
-          const found = PRODUCTS.find(
-            (p) => p.id === id || p.name.toLowerCase().replace(/[^a-z0-9]+/g, "-") === id
-          );
-          if (found) setProduct(found);
+          if (data && !data.error && data.name) {
+            setProduct(data);
+            return;
+          }
         }
       } catch (err) {
-        const found = PRODUCTS.find(
-          (p) => p.id === id || p.name.toLowerCase().replace(/[^a-z0-9]+/g, "-") === id
-        );
-        if (found) setProduct(found);
-      } finally {
-        setLoading(false);
+        console.log("Error fetching software product from backend, trying static list.");
       }
+      const found = PRODUCTS.find(
+        (p) => p.id === id || p.name.toLowerCase().replace(/[^a-z0-9]+/g, "-") === id
+      );
+      if (found) setProduct(found);
+      setLoading(false);
     };
     fetchProduct();
   }, [id]);

@@ -23,31 +23,25 @@ dotenv.config({ path: path.join(__dirname, "..", ".env") });
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// CORS configuration for local development and production VPS (vmsolutiions.com & api.vmsolutiions.com)
-const allowedOrigins = [
-  "http://localhost:8080",
-  "http://localhost:5001",
-  "http://localhost:3000",
-  "http://vmsolutiions.com",
-  "https://vmsolutiions.com",
-  "http://www.vmsolutiions.com",
-  "https://www.vmsolutiions.com",
-  "http://api.vmsolutiions.com",
-  "https://api.vmsolutiions.com",
-];
+// Bulletproof CORS Configuration for local & VPS production (vmsolutiions.com & api.vmsolutiions.com)
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  } else {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+  }
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH");
+  res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, x-admin-token");
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (mobile apps, curl, postman, or same-domain production requests)
-      if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV !== "production") {
-        return callback(null, true);
-      }
-      return callback(null, true); // Permissive CORS for seamless production deployment
-    },
-    credentials: true,
-  })
-);
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+  next();
+});
+
+app.use(cors({ origin: true, credentials: true }));
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
@@ -126,8 +120,8 @@ if (fs.existsSync(publicPath)) {
   app.use(express.static(publicPath));
 }
 
-// Fallback SPA routing for frontend URLs (Prevents 500 error on page reload)
-app.get("*", (req, res, next) => {
+// Fallback SPA routing for frontend URLs (Express 5 compatible)
+app.use((req, res, next) => {
   if (req.path.startsWith("/api")) return next();
 
   const candidates = [

@@ -26,8 +26,11 @@ function ProductsPage() {
         const res = await fetch(`${API_BASE}/products`);
         if (res.ok) {
           const data = await res.json();
-          if (data && data.length > 0) {
-            setProductList(data);
+          if (Array.isArray(data)) {
+            const combinedMap = new Map();
+            PRODUCTS.forEach((p) => combinedMap.set(p.id || p.name, p));
+            data.forEach((p) => combinedMap.set(p.id || p.name, p));
+            setProductList(Array.from(combinedMap.values()));
           }
         }
       } catch (err) {

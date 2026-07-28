@@ -48,9 +48,8 @@ const BUSY_PRICING_TABLE = [
 ];
 
 function SoftwareProductsPage() {
-  const [productList, setProductList] = useState<Product[]>(
-    PRODUCTS.filter((p) => p.type === "software" || p.type === "cloud" || ["software", "cloud"].includes(p.cat))
-  );
+  const defaultSw = PRODUCTS.filter((p) => p.type === "software" || p.type === "cloud" || ["software", "cloud"].includes(p.cat));
+  const [productList, setProductList] = useState<Product[]>(defaultSw);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [activeTab, setActiveTab] = useState<"catalog" | "pricing-tables">("catalog");
@@ -61,11 +60,15 @@ function SoftwareProductsPage() {
         const res = await fetch(`${API_BASE}/products`);
         if (res.ok) {
           const data: Product[] = await res.json();
-          if (data && data.length > 0) {
-            const sw = data.filter((p) => p.type === "software" || p.type === "cloud" || ["software", "cloud"].includes(p.cat));
-            if (sw.length > 0) {
-              setProductList(sw);
-            }
+          if (Array.isArray(data)) {
+            const combinedMap = new Map<string, Product>();
+            defaultSw.forEach((p) => combinedMap.set(p.id || p.name, p));
+            data.forEach((p) => {
+              if (p.type === "software" || p.type === "cloud" || ["software", "cloud"].includes(p.cat)) {
+                combinedMap.set(p.id || p.name, p);
+              }
+            });
+            setProductList(Array.from(combinedMap.values()));
           }
         }
       } catch (err) {

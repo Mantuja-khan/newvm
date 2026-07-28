@@ -19,9 +19,8 @@ export const Route = createFileRoute("/hardware")({
 });
 
 function HardwareProductsPage() {
-  const [productList, setProductList] = useState<Product[]>(
-    PRODUCTS.filter((p) => p.type === "hardware" || ["laptops", "desktops", "workstations", "accessories"].includes(p.cat))
-  );
+  const defaultHw = PRODUCTS.filter((p) => p.type === "hardware" || ["laptops", "desktops", "workstations", "accessories"].includes(p.cat));
+  const [productList, setProductList] = useState<Product[]>(defaultHw);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
@@ -31,11 +30,15 @@ function HardwareProductsPage() {
         const res = await fetch(`${API_BASE}/products`);
         if (res.ok) {
           const data: Product[] = await res.json();
-          if (data && data.length > 0) {
-            const hw = data.filter((p) => p.type === "hardware" || ["laptops", "desktops", "workstations", "accessories"].includes(p.cat));
-            if (hw.length > 0) {
-              setProductList(hw);
-            }
+          if (Array.isArray(data)) {
+            const combinedMap = new Map<string, Product>();
+            defaultHw.forEach((p) => combinedMap.set(p.id || p.name, p));
+            data.forEach((p) => {
+              if (p.type === "hardware" || ["laptops", "desktops", "workstations", "accessories"].includes(p.cat)) {
+                combinedMap.set(p.id || p.name, p);
+              }
+            });
+            setProductList(Array.from(combinedMap.values()));
           }
         }
       } catch (err) {
