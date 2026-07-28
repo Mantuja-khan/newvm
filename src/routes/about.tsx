@@ -1,10 +1,22 @@
-import { Link } from "react-router-dom";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { FaCheckCircle, FaBullseye, FaEye, FaHeart, FaArrowRight, FaUserTie } from "react-icons/fa";
 import { PageHero } from "@/components/PageHero";
 import { SectionHeading } from "@/components/SectionHeading";
 import aboutImg from "@/assets/about-team.jpg";
 
-export function AboutPage() {
+export const Route = createFileRoute("/about")({
+  head: () => ({
+    meta: [
+      { title: "About Us — VM Solutiions" },
+      { name: "description", content: "Learn about VM Solutiions — Founded by Vishal Singh (Founder) & Mantuja Khan (Partner) on 19 Feb 2026." },
+      { property: "og:title", content: "About VM Solutiions" },
+      { property: "og:description", content: "Empowering businesses with reliable IT solutions." },
+    ],
+  }),
+  component: AboutPage,
+});
+
+function AboutPage() {
   return (
     <>
       <PageHero title="About VM Solutiions" crumb="About Us" />
@@ -88,13 +100,13 @@ export function AboutPage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="reveal py-20 bg-[image:var(--gradient-primary)] text-white">
-        <div className="container-x text-center max-w-2xl">
-          <h2 className="text-3xl sm:text-4xl font-bold font-display">Ready to Work with VM Solutiions?</h2>
-          <p className="mt-4 text-white/90">Talk to our solutions team today for a free consultation and quote.</p>
+      <section className="reveal py-20">
+        <div className="container-x text-center max-w-3xl">
+          <h2 className="text-3xl font-bold">Ready to Upgrade Your Business Infrastructure?</h2>
+          <p className="mt-4 text-muted-foreground">Talk to our experts today for a free consultation or custom quote.</p>
           <div className="mt-8 flex justify-center gap-4">
-            <Link to="/contact" className="btn-secondary bg-white text-slate-900 hover:bg-slate-100">Get in Touch <FaArrowRight /></Link>
+            <Link to="/contact" className="btn-primary flex items-center gap-2 py-3 px-6 rounded-xl font-semibold">Contact Us <FaArrowRight /></Link>
+            <Link to="/software" className="btn-outline py-3 px-6 rounded-xl font-semibold">Explore Software</Link>
           </div>
         </div>
       </section>

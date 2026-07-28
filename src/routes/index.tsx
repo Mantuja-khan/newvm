@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
@@ -6,16 +6,29 @@ import "swiper/css";
 import "swiper/css/pagination";
 import {
   FaArrowRight, FaCheckCircle, FaShieldAlt,
-  FaLightbulb, FaHandshake, FaPlus, FaMinus,
-  FaExternalLinkAlt,
+  FaLightbulb, FaHandshake, FaQuoteRight, FaPlus, FaMinus,
+  FaShoppingCart, FaExternalLinkAlt,
 } from "react-icons/fa";
 import { useState, useEffect } from "react";
-import { SERVICES, PROJECTS, BRAND } from "@/data/site";
+import type { Swiper as SwiperClass } from "swiper";
+import { SERVICES, PRODUCTS, PROJECTS, BRAND } from "@/data/site";
 import aboutImg from "@/assets/about-team.jpg";
 import { SectionHeading } from "@/components/SectionHeading";
+import { mergeAlias } from "vite";
 import { API_BASE } from "@/config/api";
 
+export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "VM Solutiions — Software, Cloud & IT Services in India" },
+      { name: "description", content: "Web development, Tally & BUSY, cloud hosting and laptops — one trusted IT partner for your business." },
+    ],
+  }),
+  component: HomePage,
+});
+
 const HERO_SLIDES = SERVICES.filter((s) => s.image);
+
 
 const WHY = [
   { icon: FaShieldAlt, title: "Trusted & Certified", text: "Expert solutions for Tally, BUSY and leading cloud vendors." },
@@ -45,10 +58,11 @@ const FAQS = [
   { q: "Do you offer white-label web development?", a: "Yes — agencies and consultants can partner with us under NDA for white-label delivery." },
 ];
 
-export function HomePage() {
+
+function HomePage() {
   const [heroIdx, setHeroIdx] = useState(0);
-  const [homeReviews, setHomeReviews] = useState(TESTIMONIALS);
-  const active = HERO_SLIDES[heroIdx] || HERO_SLIDES[0] || { slug: "web-development", title: "Website Designing & Development", short: "Modern, responsive websites." };
+  const [homeReviews, setHomeReviews] = useState<any[]>(TESTIMONIALS);
+  const active = HERO_SLIDES[heroIdx] ?? HERO_SLIDES[0];
 
   useEffect(() => {
     const fetchHomeReviews = async () => {
@@ -93,7 +107,7 @@ export function HomePage() {
               {active.short}
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
-              <Link to={`/services/${active.slug}`} className="btn-primary">
+              <Link to="/services/$slug" params={{ slug: active.slug }} className="btn-primary">
                 Learn More <FaArrowRight />
               </Link>
               <Link to="/contact" className="btn-outline">Get a Quote</Link>
@@ -106,6 +120,24 @@ export function HomePage() {
             transition={{ duration: 0.8, delay: 0.1 }}
             className="relative group order-1 lg:order-2"
           >
+            {/* Sunlight Beam Effect */}
+            <div className="absolute -top-16 -right-16 w-72 h-72 bg-gradient-to-bl from-amber-200/30 via-yellow-100/10 to-transparent rounded-full blur-3xl pointer-events-none mix-blend-screen z-10" />
+            <div
+              className="absolute -top-32 -right-32 w-[600px] h-[600px] pointer-events-none mix-blend-screen z-10"
+              style={{
+                background: "radial-gradient(circle at 100% 0%, rgba(253, 224, 71, 0.25) 0%, rgba(253, 224, 71, 0.08) 40%, rgba(255,255,255,0) 70%)",
+                filter: "blur(20px)"
+              }}
+            />
+            {/* Volumetric diagonal sunlight ray */}
+            <div
+              className="absolute -top-20 right-1/4 w-[160px] h-[450px] origin-top-right rotate-[40deg] pointer-events-none opacity-45 mix-blend-screen z-10"
+              style={{
+                background: "linear-gradient(to bottom, rgba(253, 224, 71, 0.35) 0%, rgba(255, 255, 255, 0.05) 60%, rgba(255, 255, 255, 0) 100%)",
+                clipPath: "polygon(0 0, 100% 0, 70% 100%, 30% 100%)",
+                filter: "blur(12px)"
+              }}
+            />
             <div className="relative w-full max-w-sm sm:max-w-md md:max-w-lg mx-auto overflow-hidden">
               <Swiper
                 modules={[Autoplay, Pagination]}
@@ -114,7 +146,7 @@ export function HomePage() {
                 loop
                 spaceBetween={0}
                 slidesPerView={1}
-                onSlideChange={(sw) => setHeroIdx(sw.realIndex)}
+                onSlideChange={(sw: SwiperClass) => setHeroIdx(sw.realIndex)}
                 className="hero-swiper"
               >
                 {HERO_SLIDES.map((s) => (
@@ -132,6 +164,7 @@ export function HomePage() {
           </motion.div>
         </div>
       </section>
+
 
       {/* SERVICES SLIDER */}
       <section className="reveal py-20 md:py-24 bg-surface overflow-hidden">
@@ -154,7 +187,8 @@ export function HomePage() {
               {SERVICES.map((s) => (
                 <SwiperSlide key={s.slug} className="h-auto">
                   <Link
-                    to={`/services/${s.slug}`}
+                    to="/services/$slug"
+                    params={{ slug: s.slug }}
                     className="group relative flex flex-col h-full bg-white rounded-2xl p-8 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-card)] border border-transparent hover:border-primary/20 transition-all overflow-hidden"
                   >
                     <span className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-[image:var(--gradient-primary)] opacity-0 group-hover:opacity-15 transition-opacity" />
@@ -179,6 +213,8 @@ export function HomePage() {
         <div className="container-x grid lg:grid-cols-2 gap-14 items-center">
           <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="relative">
             <img src={aboutImg} width={1200} height={900} loading="lazy" alt="About VM Solutiions" className="rounded-2xl shadow-[var(--shadow-card)] object-cover w-full h-[420px]" />
+
+
           </motion.div>
           <div>
             <SectionHeading center={false} eyebrow="More About Us" title={<>We Provide Best Business <span className="text-primary">Solutions in Town</span></>} subtitle="For over two decades, we've helped Indian businesses adopt the right technology at the right time — practical, reliable and honestly priced." />
@@ -196,6 +232,9 @@ export function HomePage() {
           </div>
         </div>
       </section>
+
+
+
 
       {/* WHY CHOOSE US */}
       <section className="reveal py-24 bg-surface">
@@ -245,6 +284,7 @@ export function HomePage() {
                 key={p.title}
                 className="group bg-white rounded-none overflow-hidden border border-slate-200 hover:border-primary hover:shadow-md transition-all flex flex-col justify-between"
               >
+                {/* Website Image with Square Edges (No Border Curve) */}
                 <div className="relative h-56 w-full overflow-hidden bg-slate-100 rounded-none">
                   <img
                     src={p.image}
@@ -254,6 +294,7 @@ export function HomePage() {
                   />
                 </div>
 
+                {/* Visit Website Button */}
                 <div className="p-4 bg-white border-t border-slate-200">
                   <h4 className="text-sm font-extrabold text-slate-900 line-clamp-1 mb-2 font-display uppercase">
                     {p.title}
@@ -282,6 +323,7 @@ export function HomePage() {
         </div>
       </section>
 
+
       {/* FAQ */}
       <section className="reveal py-24">
         <div className="container-x grid lg:grid-cols-[1fr_1.4fr] gap-14 items-start">
@@ -292,6 +334,9 @@ export function HomePage() {
           <FAQList />
         </div>
       </section>
+
+
+
     </>
   );
 }

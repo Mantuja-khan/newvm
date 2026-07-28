@@ -5,6 +5,11 @@ export function SectionHeading({
   title,
   subtitle,
   center = true,
+}: {
+  eyebrow: string;
+  title: React.ReactNode;
+  subtitle?: string;
+  center?: boolean;
 }) {
   return (
     <motion.div

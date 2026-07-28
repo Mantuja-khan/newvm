@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { FaFacebookF, FaTwitter, FaLinkedinIn, FaInstagram, FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaArrowRight } from "react-icons/fa";
 import { BRAND, SERVICES } from "@/data/site";
 import logoImg from "@/assets/logo.png";
@@ -49,7 +49,7 @@ export function Footer() {
           <ul className="space-y-3 text-sm text-white/70">
             {SERVICES.slice(0, 5).map((s) => (
               <li key={s.slug}>
-                <Link to={`/services/${s.slug}`} className="hover:text-primary inline-flex items-center gap-2">
+                <Link to="/services/$slug" params={{ slug: s.slug }} className="hover:text-primary inline-flex items-center gap-2">
                   <FaArrowRight className="text-[9px] text-primary" /> {s.title}
                 </Link>
               </li>

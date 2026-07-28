@@ -1,14 +1,25 @@
-import { Link, useParams } from "react-router-dom";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { FaArrowLeft, FaCheckCircle, FaShieldAlt, FaTruck, FaHeadset, FaPhoneAlt, FaPaperPlane, FaTimes, FaStar, FaTag } from "react-icons/fa";
 import { FaWhatsapp } from "react-icons/fa6";
 import { PageHero } from "@/components/PageHero";
-import { BRAND, PRODUCTS } from "@/data/site";
+import { BRAND, PRODUCTS, Product } from "@/data/site";
+
 import { API_BASE } from "@/config/api";
 
-export function SoftwareDetailPage() {
-  const { id } = useParams();
-  const [product, setProduct] = useState(null);
+export const Route = createFileRoute("/hardware/$id")({
+  head: () => ({
+    meta: [
+      { title: `Hardware Details — VM Solutiions` },
+      { name: "description", content: "Detailed specifications, price and warranty information for enterprise hardware." },
+    ],
+  }),
+  component: HardwareDetailPage,
+});
+
+function HardwareDetailPage() {
+  const { id } = Route.useParams();
+  const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quoteModalOpen, setQuoteModalOpen] = useState(false);
@@ -29,6 +40,7 @@ export function SoftwareDetailPage() {
           const data = await res.json();
           setProduct(data);
         } else {
+          // Client-side fallback search
           const found = PRODUCTS.find(
             (p) => p.id === id || p.name.toLowerCase().replace(/[^a-z0-9]+/g, "-") === id
           );
@@ -46,7 +58,7 @@ export function SoftwareDetailPage() {
     fetchProduct();
   }, [id]);
 
-  const handleQuoteSubmit = async (e) => {
+  const handleQuoteSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await fetch(`${API_BASE}/contact`, {
@@ -56,8 +68,8 @@ export function SoftwareDetailPage() {
           name,
           email,
           phone,
-          subject: `Software License Inquiry: ${product?.name}`,
-          message: `Product: ${product?.name} (${product?.price})\nNote: ${message}`,
+          subject: `Hardware Quote Inquiry: ${product?.name}`,
+          message: `Product: ${product?.name} (${product?.price})\nCustomer Note: ${message}`,
         }),
       });
       setQuoteSubmitted(true);
@@ -66,7 +78,7 @@ export function SoftwareDetailPage() {
         setQuoteSubmitted(false);
       }, 2500);
     } catch (err) {
-      alert("Submitted successfully! Our specialist will contact you shortly.");
+      alert("Submitted successfully! Our team will contact you shortly.");
       setQuoteModalOpen(false);
     }
   };
@@ -85,10 +97,10 @@ export function SoftwareDetailPage() {
   if (!product) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center py-20 px-4 bg-slate-50">
-        <h2 className="text-2xl font-bold text-slate-800">Software Product Not Found</h2>
-        <p className="text-slate-500 text-sm mt-2">The requested software product might have been moved or updated.</p>
-        <Link to="/software" className="mt-6 btn-primary py-2 px-5 text-xs font-bold rounded-xl">
-          Back to Software Catalog
+        <h2 className="text-2xl font-bold text-slate-800">Hardware Product Not Found</h2>
+        <p className="text-slate-500 text-sm mt-2">The requested hardware product might have been moved or updated.</p>
+        <Link to="/hardware" className="mt-6 btn-primary py-2 px-5 text-xs font-bold rounded-xl">
+          Back to Hardware Catalog
         </Link>
       </div>
     );
@@ -98,27 +110,29 @@ export function SoftwareDetailPage() {
   const activeImage = galleryImages[selectedImageIndex] || galleryImages[0] || "/tally-logo.png";
 
   const whatsappMsg = encodeURIComponent(
-    `Hello VM Solutiions, I am interested in purchasing:\n\n*Product:* ${product.name}\n*Price:* ${product.price}\n*MRP:* ${product.originalPrice || ""}\n\nPlease confirm availability and share license activation details.`
+    `Hello VM Solutiions, I am interested in purchasing:\n\n*Product:* ${product.name}\n*Price:* ${product.price}\n*MRP:* ${product.originalPrice || ""}\n*Condition:* ${product.condition || "Refurbished"}\n\nPlease confirm availability and share details.`
   );
 
   const relatedProducts = PRODUCTS.filter(
     (p) => (p.cat === product.cat || p.type === product.type) && p.name !== product.name
   ).slice(0, 3);
 
-  const displayFeatures = typeof product.features === "string"
-    ? product.features.split(/,|\n/).map((s) => s.trim()).filter(Boolean)
-    : (Array.isArray(product.features) && product.features.length > 0 ? product.features : [
-        "100% Genuine Official License Key & Serial Activation",
-        "Includes 1 Year Product Upgrades & Tax Compliance Patches",
-        "Free Remote Setup, Installation & Data Migration Assistance",
-        "GST Invoice available for corporate tax input credit"
+  // Helper to parse features from array or comma-separated string
+  const displayFeatures: string[] = typeof product.features === "string"
+    ? (product.features as string).split(/,|\n/).map((s: string) => s.trim()).filter(Boolean)
+    : (Array.isArray(product.features) && product.features.length > 0 ? (product.features as string[]) : [
+        "Genuine commercial body with 1 Year Warranty & free tech support",
+        "GST Invoice available for corporate tax benefits",
+        "Tested & certified hardware with clean OS pre-loaded",
+        "Ready for instant deployment in office, accounting or home use"
       ]);
 
-  const parsedSpecs = (() => {
+  // Helper to parse specs from object or comma-separated string
+  const parsedSpecs: Record<string, string> = (() => {
     if (!product.specs) return {};
     if (typeof product.specs === "string") {
-      const res = {};
-      const pairs = product.specs.split(/,|\n/);
+      const res: Record<string, string> = {};
+      const pairs = (product.specs as string).split(/,|\n/);
       for (const pair of pairs) {
         const parts = pair.split(":");
         if (parts.length >= 2) {
@@ -130,10 +144,10 @@ export function SoftwareDetailPage() {
       return res;
     }
     if (typeof product.specs === "object" && product.specs !== null) {
-      const res = {};
+      const res: Record<string, string> = {};
       for (const [k, v] of Object.entries(product.specs)) {
         if (typeof v === "object" && v !== null) {
-          for (const [subK, subV] of Object.entries(v)) {
+          for (const [subK, subV] of Object.entries(v as any)) {
             res[`${k} - ${subK}`] = String(subV);
           }
         } else {
@@ -147,13 +161,14 @@ export function SoftwareDetailPage() {
 
   return (
     <>
-      <PageHero title={product.name} crumb="Software Details" />
+      <PageHero title={product.name} crumb="Hardware Details" />
 
+      {/* Breadcrumb Navigation Bar */}
       <div className="bg-slate-100 border-b border-slate-200 py-3">
         <div className="container-x flex items-center gap-2 text-xs font-medium text-slate-500">
           <Link to="/" className="hover:text-slate-900">Home</Link>
           <span>/</span>
-          <Link to="/software" className="hover:text-slate-900">Software Catalog</Link>
+          <Link to="/hardware" className="hover:text-slate-900">Hardware Catalog</Link>
           <span>/</span>
           <span className="text-slate-900 font-bold uppercase truncate max-w-[240px] sm:max-w-none">{product.name}</span>
         </div>
@@ -162,29 +177,34 @@ export function SoftwareDetailPage() {
       <section className="py-12 bg-slate-50">
         <div className="container-x">
           <Link
-            to="/software"
+            to="/hardware"
             className="inline-flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-900 transition-colors mb-6"
           >
-            <FaArrowLeft /> Back to Software Catalog
+            <FaArrowLeft /> Back to Hardware Catalog
           </Link>
 
+          {/* Main Container */}
           <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 md:p-8 grid lg:grid-cols-12 gap-8">
+            
+            {/* LEFT COLUMN: Image Gallery & Action Buttons */}
             <div className="lg:col-span-5 flex flex-col justify-between">
               <div>
-                <div className="bg-slate-900 rounded-xl border border-slate-800 p-6 flex items-center justify-center relative min-h-[320px] shadow-inner">
+                {/* Main Large Image Container */}
+                <div className="bg-white rounded-xl border border-slate-200/80 p-4 flex items-center justify-center relative min-h-[350px] shadow-inner">
                   <img
                     src={activeImage}
                     alt={product.name}
-                    className="max-h-[280px] w-auto object-contain transition-all duration-300"
+                    className="max-h-[320px] w-auto object-contain transition-all duration-300"
                   />
 
                   {product.discount && (
-                    <span className="absolute top-3 right-3 text-xs font-extrabold text-white bg-slate-800 px-2.5 py-1 rounded-full border border-slate-700">
+                    <span className="absolute top-3 right-3 text-xs font-extrabold text-slate-800 bg-slate-100 px-2.5 py-1 rounded-full">
                       {product.discount}
                     </span>
                   )}
                 </div>
 
+                {/* Multiple Image Thumbnails Gallery Selector */}
                 {galleryImages.length > 1 && (
                   <div className="mt-4 flex items-center justify-center gap-3 overflow-x-auto py-2">
                     {galleryImages.map((imgUrl, idx) => (
@@ -205,6 +225,7 @@ export function SoftwareDetailPage() {
                 )}
               </div>
 
+              {/* Action Buttons Below Image */}
               <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <a
                   href={`https://wa.me/${BRAND.phoneRaw}?text=${whatsappMsg}`}
@@ -212,7 +233,7 @@ export function SoftwareDetailPage() {
                   rel="noopener noreferrer"
                   className="bg-slate-900 hover:bg-slate-800 text-white py-3.5 px-4 rounded-xl font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md active:scale-[0.98] text-center"
                 >
-                  <FaWhatsapp className="text-lg" /> BUY ON WHATSAPP
+                  <FaWhatsapp className="text-lg" /> SEND ENQUIRY
                 </a>
 
                 <button
@@ -220,33 +241,37 @@ export function SoftwareDetailPage() {
                   onClick={() => setQuoteModalOpen(true)}
                   className="bg-slate-800 hover:bg-slate-700 text-white py-3.5 px-4 rounded-xl font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md active:scale-[0.98]"
                 >
-                  <FaPhoneAlt className="text-xs" /> GET OFFICIAL QUOTE
+                  <FaPhoneAlt className="text-xs" /> BUY / GET QUOTE
                 </button>
               </div>
             </div>
 
+            {/* RIGHT COLUMN: Product Info & Specs */}
             <div className="lg:col-span-7">
+              {/* Product Title */}
               <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-display leading-tight uppercase">
                 {product.name}
               </h1>
 
+              {/* Rating & Reviews Badge */}
               {product.rating && (
                 <div className="flex items-center gap-3 mt-3">
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-slate-800 text-white text-xs font-bold rounded">
                     {product.rating} <FaStar className="text-[10px]" />
                   </span>
                   <span className="text-xs text-slate-500 font-semibold">
-                    {product.reviewsCount || "94"} Verified Business Reviews
+                    {product.reviewsCount || "128"} Ratings & Reviews
                   </span>
                   <span className="text-slate-300">|</span>
                   <span className="text-xs font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded">
-                    Official License
+                    {product.condition || "Refurbished Grade A+"}
                   </span>
                 </div>
               )}
 
+              {/* Special Price Block (Neutral slate font) */}
               <div className="mt-5 p-4 bg-slate-50 border border-slate-200/80 rounded-xl">
-                <div className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">License Pricing</div>
+                <div className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">Price</div>
                 <div className="flex items-baseline gap-3 mt-1">
                   <span className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
                     {product.price}
@@ -256,17 +281,18 @@ export function SoftwareDetailPage() {
                       {product.originalPrice}
                     </span>
                   )}
-                  {product.renewalPrice && (
-                    <span className="text-xs font-bold text-slate-700 bg-slate-200 px-2.5 py-1 rounded">
-                      Renewal: {product.renewalPrice}
+                  {product.discount && (
+                    <span className="text-xs font-bold text-slate-800 bg-slate-200 px-2.5 py-1 rounded">
+                      {product.discount}
                     </span>
                   )}
                 </div>
               </div>
 
+              {/* Key Bullet Highlights */}
               <div className="mt-6">
                 <h3 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                  <FaTag className="text-slate-700" /> License Inclusions & Features
+                  <FaTag className="text-slate-700" /> Key Highlights & Features
                 </h3>
                 <ul className="mt-3 space-y-2">
                   {displayFeatures.map((feat, idx) => (
@@ -278,35 +304,38 @@ export function SoftwareDetailPage() {
                 </ul>
               </div>
 
+              {/* Warranty & Delivery Cards */}
               <div className="mt-6 grid grid-cols-3 gap-3">
                 <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
                   <FaShieldAlt className="text-slate-700 text-lg mx-auto mb-1" />
-                  <div className="text-[11px] font-bold text-slate-800">100% Genuine</div>
-                  <div className="text-[9px] text-slate-400">Authorized License</div>
+                  <div className="text-[11px] font-bold text-slate-800">{product.warranty || "1 Year Warranty"}</div>
+                  <div className="text-[9px] text-slate-400">VM Solutiions Covered</div>
                 </div>
                 <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
                   <FaTruck className="text-slate-700 text-lg mx-auto mb-1" />
-                  <div className="text-[11px] font-bold text-slate-800">Instant Delivery</div>
-                  <div className="text-[9px] text-slate-400">Serial Key via Email</div>
+                  <div className="text-[11px] font-bold text-slate-800">Pan-India Delivery</div>
+                  <div className="text-[9px] text-slate-400">Safe Sealed Express</div>
                 </div>
                 <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
                   <FaHeadset className="text-slate-700 text-lg mx-auto mb-1" />
-                  <div className="text-[11px] font-bold text-slate-800">Free Tech Support</div>
-                  <div className="text-[9px] text-slate-400">Remote Setup Assistance</div>
+                  <div className="text-[11px] font-bold text-slate-800">Lifetime Support</div>
+                  <div className="text-[9px] text-slate-400">Remote & On-site</div>
                 </div>
               </div>
 
+              {/* Product Overview Description */}
               {product.desc && (
                 <div className="mt-6 border-t border-slate-200 pt-5">
-                  <h3 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider">Product Overview</h3>
+                  <h3 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider">Product Description</h3>
                   <p className="mt-2 text-xs text-slate-600 leading-relaxed font-normal">{product.desc}</p>
                 </div>
               )}
 
+              {/* SPECIFICATIONS TABLE */}
               {Object.keys(parsedSpecs).length > 0 && (
                 <div className="mt-8 border-t border-slate-200 pt-6">
                   <h3 className="text-lg font-black text-slate-900 font-display uppercase tracking-tight">
-                    License & System Specifications
+                    Technical Specifications
                   </h3>
 
                   <div className="mt-4 border border-slate-200 rounded-xl overflow-hidden shadow-sm bg-white">
@@ -330,10 +359,11 @@ export function SoftwareDetailPage() {
             </div>
           </div>
 
+          {/* Related Hardware Products */}
           {relatedProducts.length > 0 && (
             <div className="mt-16 border-t border-slate-200 pt-10">
               <h3 className="text-2xl font-black text-slate-900 font-display uppercase tracking-tight">
-                Related Software & Cloud Plans
+                Similar Hardware Products
               </h3>
               <div className="mt-6 grid sm:grid-cols-3 gap-6">
                 {relatedProducts.map((rp) => {
@@ -348,10 +378,10 @@ export function SoftwareDetailPage() {
                     >
                       <div>
                         <div className="flex justify-end">
-                          <span className="text-xs font-bold text-slate-700">{rp.tag || "Software"}</span>
+                          <span className="text-xs font-bold text-emerald-600">{rp.discount || "Best Offer"}</span>
                         </div>
-                        <Link to={`/software/${rpId}`}>
-                          <div className="h-36 bg-slate-900 rounded-lg p-3 flex items-center justify-center">
+                        <Link to="/hardware/$id" params={{ id: rpId }}>
+                          <div className="h-36 bg-white rounded-lg p-2 flex items-center justify-center">
                             {rp.image ? (
                               <img src={rp.image} alt={rp.name} className="h-full w-auto object-contain" />
                             ) : (
@@ -363,16 +393,17 @@ export function SoftwareDetailPage() {
                           </h4>
                         </Link>
                         <div className="mt-2 flex items-baseline gap-2">
-                          <span className="text-lg font-black text-slate-900">{rp.price}</span>
+                          <span className="text-lg font-black text-emerald-600">{rp.price}</span>
+                          {rp.originalPrice && <span className="text-xs text-red-400 line-through">{rp.originalPrice}</span>}
                         </div>
                       </div>
                       <a
                         href={`https://wa.me/${BRAND.phoneRaw}?text=${rpWhatsapp}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-4 bg-[#1cd466] hover:bg-[#18c35b] text-white py-2 px-3 rounded-lg text-xs font-bold uppercase flex items-center justify-center gap-1.5 text-center"
+                        className="mt-4 bg-[#1cd466] hover:bg-[#18c35b] text-white py-2 px-3 rounded-lg text-xs font-bold uppercase flex items-center justify-center gap-1.5"
                       >
-                        <FaWhatsapp className="text-base" /> BUY NOW
+                        <FaWhatsapp className="text-base" /> SEND ENQUIRY
                       </a>
                     </div>
                   );
@@ -383,6 +414,7 @@ export function SoftwareDetailPage() {
         </div>
       </section>
 
+      {/* QUOTE MODAL */}
       {quoteModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
           <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 relative">
@@ -398,23 +430,23 @@ export function SoftwareDetailPage() {
                 <FaCheckCircle className="text-emerald-500 text-4xl mx-auto mb-3" />
                 <h3 className="text-xl font-bold text-slate-900">Inquiry Received!</h3>
                 <p className="text-xs text-slate-500 mt-2">
-                  Our software specialist will get in touch with official quote for <strong>{product.name}</strong>.
+                  Our hardware specialist will get in touch with pricing & availability for <strong>{product.name}</strong>.
                 </p>
               </div>
             ) : (
               <form onSubmit={handleQuoteSubmit}>
-                <h3 className="text-xl font-bold text-slate-900 font-display">Get License Quote</h3>
+                <h3 className="text-xl font-bold text-slate-900 font-display">Request Price Quote</h3>
                 <p className="text-xs text-slate-500 mt-1">Inquiring for: <strong className="text-slate-800">{product.name}</strong></p>
 
                 <div className="mt-4 space-y-3">
                   <div>
-                    <label className="text-xs font-semibold text-slate-600">Company / Full Name *</label>
+                    <label className="text-xs font-semibold text-slate-600">Your Full Name *</label>
                     <input
                       type="text"
                       required
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      placeholder="e.g. Acme Enterprises"
+                      placeholder="e.g. Rahul Sharma"
                       className="mt-1 w-full px-3 py-2 border border-slate-200 rounded-xl text-xs"
                     />
                   </div>
@@ -436,24 +468,24 @@ export function SoftwareDetailPage() {
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="acme@company.com"
+                      placeholder="rahul@company.com"
                       className="mt-1 w-full px-3 py-2 border border-slate-200 rounded-xl text-xs"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-semibold text-slate-600">Number of Users / Requirements</label>
+                    <label className="text-xs font-semibold text-slate-600">Custom Requirements / Quantity</label>
                     <textarea
                       rows={2}
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
-                      placeholder="e.g. Need Tally Gold multi-user with 3 Cloud Users..."
+                      placeholder="e.g. Need 5 units for office accounting..."
                       className="mt-1 w-full px-3 py-2 border border-slate-200 rounded-xl text-xs"
                     />
                   </div>
                 </div>
 
                 <button type="submit" className="w-full btn-primary py-2.5 rounded-xl text-xs font-bold mt-5 flex items-center justify-center gap-2">
-                  <FaPaperPlane /> Request Official Quote
+                  <FaPaperPlane /> Submit Quote Inquiry
                 </button>
               </form>
             )}

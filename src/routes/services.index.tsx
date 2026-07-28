@@ -1,11 +1,21 @@
-import { Link } from "react-router-dom";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { FaArrowRight } from "react-icons/fa";
 import { PageHero } from "@/components/PageHero";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SERVICES } from "@/data/site";
 
-export function ServicesPage() {
+export const Route = createFileRoute("/services/")({
+  head: () => ({
+    meta: [
+      { title: "Services — Web, Software, Cloud & Hardware | VM Solutiions" },
+      { name: "description", content: "Comprehensive IT services including web development, Tally & BUSY, cloud hosting and laptop sales." },
+    ],
+  }),
+  component: ServicesIndex,
+});
+
+function ServicesIndex() {
   return (
     <>
       <PageHero title="Our Services" crumb="Services" />
@@ -17,7 +27,7 @@ export function ServicesPage() {
           <div className="mt-16 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {SERVICES.map((s, i) => (
               <motion.div key={s.slug} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}>
-                <Link to={`/services/${s.slug}`} className="group block h-full bg-white rounded-2xl p-8 border border-border hover:border-primary/30 hover:shadow-[var(--shadow-card)] transition-all">
+                <Link to="/services/$slug" params={{ slug: s.slug }} className="group block h-full bg-white rounded-2xl p-8 border border-border hover:border-primary/30 hover:shadow-[var(--shadow-card)] transition-all">
                   <span className="grid place-items-center h-14 w-14 rounded-xl bg-accent text-primary text-2xl group-hover:bg-primary group-hover:text-white transition-colors">
                     <s.icon />
                   </span>
