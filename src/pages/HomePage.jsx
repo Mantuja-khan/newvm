@@ -48,7 +48,7 @@ const FAQS = [
 export function HomePage() {
   const [heroIdx, setHeroIdx] = useState(0);
   const [homeReviews, setHomeReviews] = useState(TESTIMONIALS);
-  const active = HERO_SLIDES[heroIdx] ?? HERO_SLIDES[0];
+  const active = HERO_SLIDES[heroIdx] || HERO_SLIDES[0] || { slug: "web-development", title: "Website Designing & Development", short: "Modern, responsive websites." };
 
   useEffect(() => {
     const fetchHomeReviews = async () => {

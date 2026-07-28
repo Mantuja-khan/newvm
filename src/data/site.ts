@@ -1,7 +1,7 @@
 import { FaLaptopCode, FaCloud, FaLaptop, FaCalculator, FaHeadset } from "react-icons/fa";
 import type { IconType } from "react-icons";
 import imgWeb from "@/assets/web-design-hero.png";
-import imgBusy from "@/assets/svc-image-3.png.asset.json";
+import imgBusy from "@/assets/tally-logo.png";
 import imgCloud from "@/assets/cloud-services-hero.png";
 import imgLaptop from "@/assets/laptop-hero.png";
 import imgNiraajPack from "@/assets/niraaj-pack-hero.png";
@@ -79,7 +79,7 @@ export const SERVICES: Service[] = [
       "End-to-end accounting solutions — from licensing and installation to customization, GST compliance, migration and hands-on training for your team.",
     icon: FaCalculator,
     image: imgTallyLogo,
-    images: [imgTallyLogo, imgBusy.url],
+    images: [imgTallyLogo, imgBusy],
     features: [
       "Genuine Tally Prime & BUSY Licenses",
       "Installation & Configuration",
