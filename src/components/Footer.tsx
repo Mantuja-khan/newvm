@@ -1,56 +1,45 @@
-import { Link } from "@tanstack/react-router";
-import { FaFacebookF, FaTwitter, FaLinkedinIn, FaInstagram, FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaArrowRight } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaWhatsapp } from "react-icons/fa";
 import { BRAND, SERVICES } from "@/data/site";
 import logoImg from "@/assets/logo.png";
 
 export function Footer() {
   return (
-    <footer className="relative mt-24 text-white bg-[image:var(--gradient-dark)]">
-      <div className="container-x pt-20 pb-10 grid gap-12 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
-        <div>
-          <div className="flex items-center gap-2 mb-5">
-            <img src={logoImg} alt={BRAND.name} className="h-16 w-auto object-contain bg-white rounded-xl p-2 shadow-lg" />
-          </div>
-          <p className="text-white/70 text-sm leading-relaxed mb-6">
-            {BRAND.full} is a trusted technology partner delivering software, cloud, hardware and consulting solutions to modern businesses across India.
+    <footer className="bg-slate-950 text-white pt-16 pb-8 border-t border-slate-800">
+      <div className="container-x grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-slate-800">
+        <div className="space-y-4">
+          <Link to="/" className="flex items-center gap-3">
+            <img src={logoImg} alt="VM Solutiions" className="h-10 w-auto object-contain bg-white/10 p-1 rounded-lg" />
+            <span className="font-extrabold text-xl leading-none text-white tracking-tight font-display">
+              VM <span className="text-primary">SOLUTIIONS</span>
+            </span>
+          </Link>
+          <p className="text-xs text-slate-400 leading-relaxed">
+            Your single trusted technology partner for Tally Prime, BUSY Software, commercial hardware, cloud hosting, and enterprise IT infrastructure.
           </p>
-          <div className="flex gap-3">
-            {[FaFacebookF, FaTwitter, FaLinkedinIn, FaInstagram].map((Icon, i) => (
-              <a key={i} href="#" aria-label="social" className="grid place-items-center h-9 w-9 rounded-full border border-white/20 hover:bg-primary hover:border-primary transition-colors">
-                <Icon className="text-xs" />
-              </a>
-            ))}
-          </div>
         </div>
 
         <div>
-          <h4 className="font-display text-lg mb-5">Quick Links</h4>
-          <ul className="space-y-3 text-sm text-white/70">
-            {[
-              ["/", "Home"],
-              ["/about", "About Us"],
-              ["/hardware", "Hardware Products"],
-              ["/software", "Software Products"],
-              ["/products", "All Products"],
-              ["/services", "Services"],
-              ["/contact", "Contact"]
-            ].map(([to, label]) => (
-              <li key={to}>
-                <Link to={to} className="hover:text-primary inline-flex items-center gap-2">
-                  <FaArrowRight className="text-[9px] text-primary" /> {label}
-                </Link>
-              </li>
-            ))}
+          <h4 className="font-extrabold text-sm uppercase text-white tracking-wider mb-4 font-display">Quick Links</h4>
+          <ul className="space-y-2 text-xs text-slate-400">
+            <li><Link to="/" className="hover:text-white transition-colors">Home</Link></li>
+            <li><Link to="/about" className="hover:text-white transition-colors">About Us</Link></li>
+            <li><Link to="/hardware" className="hover:text-white transition-colors">Commercial Hardware</Link></li>
+            <li><Link to="/software" className="hover:text-white transition-colors">Software & Cloud</Link></li>
+            <li><Link to="/products" className="hover:text-white transition-colors">All Products</Link></li>
+            <li><Link to="/services" className="hover:text-white transition-colors">Services</Link></li>
+            <li><Link to="/contact" className="hover:text-white transition-colors">Contact Us</Link></li>
+            <li><Link to="/admin" className="hover:text-white transition-colors">Admin Portal</Link></li>
           </ul>
         </div>
 
         <div>
-          <h4 className="font-display text-lg mb-5">Services</h4>
-          <ul className="space-y-3 text-sm text-white/70">
-            {SERVICES.slice(0, 5).map((s) => (
+          <h4 className="font-extrabold text-sm uppercase text-white tracking-wider mb-4 font-display">Our Services</h4>
+          <ul className="space-y-2 text-xs text-slate-400">
+            {SERVICES.map((s) => (
               <li key={s.slug}>
-                <Link to="/services/$slug" params={{ slug: s.slug }} className="hover:text-primary inline-flex items-center gap-2">
-                  <FaArrowRight className="text-[9px] text-primary" /> {s.title}
+                <Link to={`/services/${s.slug}`} className="hover:text-white transition-colors">
+                  {s.title}
                 </Link>
               </li>
             ))}
@@ -58,28 +47,33 @@ export function Footer() {
         </div>
 
         <div>
-          <h4 className="font-display text-lg mb-5">Get in Touch</h4>
-          <ul className="space-y-4 text-sm text-white/70">
-            <li className="flex gap-3">
-              <FaMapMarkerAlt className="text-primary mt-1 shrink-0" />
+          <h4 className="font-extrabold text-sm uppercase text-white tracking-wider mb-4 font-display">Contact Info</h4>
+          <ul className="space-y-3 text-xs text-slate-400">
+            <li className="flex items-start gap-3">
+              <FaMapMarkerAlt className="text-primary text-sm shrink-0 mt-0.5" />
               <span>{BRAND.address}</span>
             </li>
-            <li className="flex gap-3">
-              <FaPhoneAlt className="text-primary mt-1 shrink-0" />
-              <a href={`tel:${BRAND.phoneRaw}`} className="hover:text-primary">{BRAND.phone}</a>
+            <li className="flex items-center gap-3">
+              <FaPhoneAlt className="text-primary text-sm shrink-0" />
+              <a href={`tel:${BRAND.phoneRaw}`} className="hover:text-white transition-colors">{BRAND.phone}</a>
             </li>
-            <li className="flex gap-3">
-              <FaEnvelope className="text-primary mt-1 shrink-0" />
-              <a href={`mailto:${BRAND.email}`} className="hover:text-primary">{BRAND.email}</a>
+            <li className="flex items-center gap-3">
+              <FaEnvelope className="text-primary text-sm shrink-0" />
+              <a href={`mailto:${BRAND.email}`} className="hover:text-white transition-colors">{BRAND.email}</a>
+            </li>
+            <li className="flex items-center gap-3">
+              <FaWhatsapp className="text-emerald-400 text-sm shrink-0" />
+              <a href={`https://wa.me/${BRAND.phoneRaw}`} target="_blank" rel="noreferrer" className="hover:text-white transition-colors">WhatsApp Instant Support</a>
             </li>
           </ul>
         </div>
       </div>
 
-      <div className="border-t border-white/10">
-        <div className="container-x py-5 flex flex-col sm:flex-row gap-2 items-center justify-between text-xs text-white/50">
-          <p>© {new Date().getFullYear()} {BRAND.full}. All Rights Reserved.</p>
-          <p>Crafted with care in Bhiwadi, Rajasthan.</p>
+      <div className="container-x mt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+        <div>© {new Date().getFullYear()} VM Solutiions. All Rights Reserved.</div>
+        <div className="flex gap-6">
+          <span>Tally & BUSY Authorized Partner</span>
+          <Link to="/admin" className="hover:text-slate-400">Admin Login</Link>
         </div>
       </div>
     </footer>

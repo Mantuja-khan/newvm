@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { FaHome, FaChevronRight } from "react-icons/fa";
 
-export function PageHero({ title, crumb }: { title: string; crumb: string }) {
+export function PageHero({ title, crumb }) {
   return (
     <section className="relative overflow-hidden bg-[image:var(--gradient-dark)] text-white">
       <div className="absolute inset-0 dot-pattern opacity-30" />

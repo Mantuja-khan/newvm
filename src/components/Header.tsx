@@ -1,133 +1,113 @@
-import { Link, useRouterState } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { FaChevronDown, FaBars, FaTimes, FaPhoneAlt } from "react-icons/fa";
-import { BRAND, SERVICES } from "@/data/site";
+import { Link, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { FaPhoneAlt, FaEnvelope, FaLaptop, FaCloud, FaDesktop, FaCode, FaBars, FaTimes, FaUserShield } from "react-icons/fa";
+import { BRAND, NAV_LINKS } from "@/data/site";
 import logoImg from "@/assets/logo.png";
 
-type NavItem = { to: "/" | "/about" | "/hardware" | "/software" | "/services" | "/contact"; label: string; mega?: boolean };
-const NAV: NavItem[] = [
-  { to: "/", label: "Home" },
-  { to: "/about", label: "About" },
-  { to: "/hardware", label: "Hardware" },
-  { to: "/software", label: "Software" },
-  { to: "/services", label: "Services", mega: true },
-  { to: "/contact", label: "Contact" },
-];
-
 export function Header() {
+  const location = useLocation();
+  const pathname = location.pathname;
   const [scrolled, setScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [megaOpen, setMegaOpen] = useState(false);
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    onScroll();
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
-    setOpen(false);
-    setMegaOpen(false);
+    setMobileMenuOpen(false);
   }, [pathname]);
 
   return (
-    <>
-      {/* Top bar */}
-      <div className="hidden md:block bg-[color:var(--primary-dark)] text-white/90 text-xs">
-        <div className="container-x flex items-center justify-between py-2">
-          <span>Working Hours: {BRAND.hours}</span>
-          <div className="flex items-center gap-5">
-            <a href={`tel:${BRAND.phoneRaw}`} className="hover:text-white flex items-center gap-2">
-              <FaPhoneAlt className="text-[10px]" /> {BRAND.phone}
+    <header className="sticky top-0 z-50 w-full transition-all">
+      <div className="bg-slate-900 text-white text-xs py-2 px-4 border-b border-slate-800">
+        <div className="container-x flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-6">
+            <a href={`tel:${BRAND.phoneRaw}`} className="flex items-center gap-2 hover:text-primary transition-colors">
+              <FaPhoneAlt className="text-primary text-[10px]" />
+              <span>{BRAND.phone}</span>
             </a>
-            <a href={`mailto:${BRAND.email}`} className="hover:text-white">{BRAND.email}</a>
+            <a href={`mailto:${BRAND.email}`} className="hidden sm:flex items-center gap-2 hover:text-primary transition-colors">
+              <FaEnvelope className="text-primary text-[10px]" />
+              <span>{BRAND.email}</span>
+            </a>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <span className="hidden md:inline text-slate-400">Authorized Tally & BUSY Partner</span>
+            <Link to="/admin" className="flex items-center gap-1 text-xs font-bold text-amber-400 hover:text-amber-300 bg-slate-800 px-2.5 py-0.5 rounded-full border border-amber-400/30">
+              <FaUserShield className="text-[10px]" /> Admin Panel
+            </Link>
           </div>
         </div>
       </div>
 
-      <header
-        className={`sticky top-0 z-50 transition-all duration-300 ${
-          scrolled ? "bg-white/95 backdrop-blur shadow-[var(--shadow-soft)]" : "bg-white"
-        }`}
-      >
-        <div className="container-x flex items-center justify-between h-20">
-          <Link to="/" className="flex items-center gap-2 shrink-0 min-w-0">
-            <img src={logoImg} alt={BRAND.name} className="h-18 w-auto object-contain" />
+      <div className={`bg-white/95 backdrop-blur-md transition-all duration-300 border-b ${scrolled ? "border-slate-200 shadow-md py-3" : "border-slate-100 py-4"}`}>
+        <div className="container-x flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-3">
+            <img src={logoImg} alt="VM Solutiions" className="h-10 w-auto object-contain" />
+            <div className="flex flex-col">
+              <span className="font-extrabold text-xl leading-none text-slate-900 tracking-tight font-display">
+                VM <span className="text-primary">SOLUTIIONS</span>
+              </span>
+              <span className="text-[10px] font-bold text-slate-500 tracking-widest uppercase mt-0.5">
+                Technology & Cloud Partner
+              </span>
+            </div>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-1">
-            {NAV.map((n) => (
-              <div
-                key={n.to}
-                className="relative"
-                onMouseEnter={() => n.mega && setMegaOpen(true)}
-                onMouseLeave={() => n.mega && setMegaOpen(false)}
-              >
+          <nav className="hidden lg:flex items-center gap-8">
+            {NAV_LINKS.map((link) => {
+              const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
+              return (
                 <Link
-                  to={n.to}
-                  className="px-4 py-2 text-sm font-semibold text-foreground/80 hover:text-primary transition-colors inline-flex items-center gap-1.5"
-                  activeProps={{ className: "px-4 py-2 text-sm font-semibold text-primary inline-flex items-center gap-1.5" }}
-                  activeOptions={{ exact: n.to === "/" }}
+                  key={link.href}
+                  to={link.href}
+                  className={`text-sm font-semibold transition-colors hover:text-primary ${isActive ? "text-primary font-bold" : "text-slate-700"}`}
                 >
-                  {n.label}
-                  {n.mega && <FaChevronDown className="text-[9px] opacity-70" />}
+                  {link.label}
                 </Link>
-
-                {n.mega && megaOpen && (
-                  <div className="absolute left-0 top-full pt-2 w-64">
-                    <div className="rounded-xl bg-white shadow-md border border-slate-200 py-2 flex flex-col">
-                      {SERVICES.filter(
-                        (s) => !["amc-consultancy", "support", "laptops-desktops"].includes(s.slug)
-                      ).map((s) => (
-                        <Link
-                          key={s.slug}
-                          to="/services/$slug"
-                          params={{ slug: s.slug }}
-                          className="px-4 py-2 text-sm font-medium text-foreground/80 hover:text-primary hover:bg-slate-50 transition-colors"
-                        >
-                          {s.title}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </nav>
 
-          <div className="flex items-center gap-3">
-            <Link to="/contact" className="hidden md:inline-flex btn-primary">Get a Quote</Link>
-            <button
-              className="lg:hidden grid place-items-center h-10 w-10 rounded-lg border border-border"
-              onClick={() => setOpen((v) => !v)}
-              aria-label="Toggle menu"
-            >
-              {open ? <FaTimes /> : <FaBars />}
-            </button>
+          <div className="hidden lg:flex items-center gap-3">
+            <Link to="/contact" className="btn-primary text-xs px-5 py-2.5 font-bold uppercase tracking-wider rounded-xl">
+              Get Free Quote
+            </Link>
+          </div>
+
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="lg:hidden p-2 rounded-xl text-slate-700 hover:bg-slate-100"
+          >
+            {mobileMenuOpen ? <FaTimes className="text-xl" /> : <FaBars className="text-xl" />}
+          </button>
+        </div>
+      </div>
+
+      {mobileMenuOpen && (
+        <div className="lg:hidden bg-white border-b border-slate-200 px-4 py-6 space-y-4 shadow-xl">
+          <nav className="flex flex-col space-y-3">
+            {NAV_LINKS.map((link) => (
+              <Link
+                key={link.href}
+                to={link.href}
+                className="text-sm font-bold text-slate-800 hover:text-primary py-1 border-b border-slate-100"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+          <div className="pt-2">
+            <Link to="/contact" className="btn-primary w-full text-center py-3 text-xs font-bold uppercase tracking-wider rounded-xl">
+              Get Free Quote
+            </Link>
           </div>
         </div>
-
-        {open && (
-          <div className="lg:hidden border-t border-border bg-white">
-            <div className="container-x py-4 flex flex-col">
-              {NAV.map((n) => (
-                <Link
-                  key={n.to}
-                  to={n.to}
-                  className="py-3 border-b border-border font-semibold text-foreground/80"
-                  activeProps={{ className: "py-3 border-b border-border font-semibold text-primary" }}
-                  activeOptions={{ exact: n.to === "/" }}
-                >
-                  {n.label}
-                </Link>
-              ))}
-              <Link to="/contact" className="btn-primary mt-4 justify-center">Get a Quote</Link>
-            </div>
-          </div>
-        )}
-      </header>
-    </>
+      )}
+    </header>
   );
 }
