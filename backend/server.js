@@ -127,7 +127,7 @@ if (fs.existsSync(publicPath)) {
 }
 
 // Fallback SPA routing for frontend URLs (Prevents 500 error on page reload)
-app.get("*", (req, res, next) => {
+app.use((req, res, next) => {
   if (req.path.startsWith("/api")) return next();
 
   const candidates = [
