@@ -66,15 +66,7 @@ export const Route = createRootRouteWithContext()({
     errorComponent: ErrorComponent,
 });
 function RootShell({ children }) {
-    return (<html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        {children}
-        <Scripts />
-      </body>
-    </html>);
+    return children;
 }
 function RootComponent() {
     const { queryClient } = Route.useRouteContext();

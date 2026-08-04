@@ -6,6 +6,7 @@ import { PageHero } from "@/components/PageHero";
 import { SectionHeading } from "@/components/SectionHeading";
 import { HARDWARE_CATEGORIES, PRODUCTS, BRAND } from "@/data/site";
 import { API_BASE } from "@/config/api";
+
 export const Route = createFileRoute("/hardware")({
     head: () => ({
         meta: [
@@ -15,11 +16,13 @@ export const Route = createFileRoute("/hardware")({
     }),
     component: HardwareProductsPage,
 });
+
 function HardwareProductsPage() {
     const defaultHw = PRODUCTS.filter((p) => p.type === "hardware" || ["laptops", "desktops", "workstations", "accessories"].includes(p.cat));
     const [productList, setProductList] = useState(defaultHw);
     const [selectedCategory, setSelectedCategory] = useState("all");
     const [searchQuery, setSearchQuery] = useState("");
+
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -44,6 +47,7 @@ function HardwareProductsPage() {
         };
         fetchProducts();
     }, []);
+
     const filteredProducts = productList.filter((p) => {
         const matchesCategory = selectedCategory === "all" || p.cat === selectedCategory;
         const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -52,6 +56,7 @@ function HardwareProductsPage() {
             p.desc.toLowerCase().includes(searchQuery.toLowerCase());
         return matchesCategory && matchesSearch;
     });
+
     return (<>
       <PageHero title="Hardware & IT Equipment" crumb="Hardware Products"/>
 
@@ -106,8 +111,8 @@ function HardwareProductsPage() {
 
             {/* Search Input */}
             <div className="relative w-full md:w-72">
-              <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"/>
-              <input type="text" placeholder="Search Lenovo, IdeaCentre, i5..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-9 pr-4 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:border-primary bg-slate-50/50"/>
+              <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"/>
+              <input type="text" placeholder="Search Lenovo, IdeaCentre, i5..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-9 pr-4 py-2 text-xs text-slate-900 border border-slate-200 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50 focus:bg-white transition-all select-text cursor-text pointer-events-auto"/>
             </div>
           </div>
 
@@ -122,7 +127,6 @@ function HardwareProductsPage() {
                 const prodId = p.id || p.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
                 const whatsappMsg = encodeURIComponent(`Hello VM Solutiions, I am interested in purchasing:\n\n*Product:* ${p.name}\n*Price:* ${p.price}\n*MRP:* ${p.originalPrice || ""}\n\nPlease share availability & details.`);
                 return (<div key={prodId} className="group bg-white rounded-xl border border-slate-200/90 p-5 shadow-[0_2px_15px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_16px_32px_-8px_rgba(0,0,0,0.12)] transition-all flex flex-col justify-between relative">
-                    {/* Top Right Green Discount Badge */}
                     <div className="flex justify-end items-center">
                       {p.discount ? (<span className="text-emerald-600 font-black text-sm tracking-wide">
                           {p.discount}
@@ -137,14 +141,14 @@ function HardwareProductsPage() {
                     </Link>
 
                     <div>
-                      {/* Product Title (Exact Screenshot Style: Bold Uppercase) */}
+                      {/* Product Title */}
                       <Link to="/hardware/$id" params={{ id: prodId }}>
                         <h3 className="text-lg font-black text-slate-800 leading-snug group-hover:text-primary transition-colors font-display tracking-tight uppercase line-clamp-2">
                           {p.name}
                         </h3>
                       </Link>
 
-                      {/* Price Row: Green Selling Price & Red MRP */}
+                      {/* Price Row */}
                       <div className="mt-3 flex items-baseline gap-3">
                         <span className="text-2xl font-black text-emerald-600 tracking-tight">
                           {p.price}
@@ -155,7 +159,7 @@ function HardwareProductsPage() {
                       </div>
                     </div>
 
-                    {/* Full Width Bright Green WhatsApp SEND ENQUIRY Button */}
+                    {/* WhatsApp SEND ENQUIRY Button */}
                     <div className="mt-5">
                       <a href={`https://wa.me/${BRAND.phoneRaw}?text=${whatsappMsg}`} target="_blank" rel="noopener noreferrer" className="w-full bg-[#1cd466] hover:bg-[#18c35b] text-white py-3 px-4 rounded-full font-extrabold text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md shadow-emerald-500/20 active:scale-[0.98]">
                         <FaWhatsapp className="text-xl"/> SEND ENQUIRY

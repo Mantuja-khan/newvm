@@ -17,16 +17,27 @@ export const Route = createFileRoute("/contact")({
 function ContactPage() {
     const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState(null);
+    const [formData, setFormData] = useState({
+        fullName: "",
+        emailAddress: "",
+        phoneNumber: "",
+        messageSubject: "",
+        messageContent: "",
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const formEl = e.currentTarget;
-        const formData = new FormData(formEl);
         const data = {
-            name: String(formData.get("fullName") || "").trim(),
-            email: String(formData.get("emailAddress") || "").trim(),
-            phone: String(formData.get("phoneNumber") || "").trim(),
-            subject: String(formData.get("messageSubject") || "").trim(),
-            message: String(formData.get("messageContent") || "").trim(),
+            name: formData.fullName.trim(),
+            email: formData.emailAddress.trim(),
+            phone: formData.phoneNumber.trim(),
+            subject: formData.messageSubject.trim(),
+            message: formData.messageContent.trim(),
         };
         if (!data.name || !data.email || !data.message) {
             setStatus({ type: "error", message: "Please enter your Name, Email Address, and Message." });
@@ -50,7 +61,13 @@ function ContactPage() {
                     type: "success",
                     message: resData.message || "Thank you! Your message has been submitted successfully. We will get back to you shortly.",
                 });
-                formEl.reset();
+                setFormData({
+                    fullName: "",
+                    emailAddress: "",
+                    phoneNumber: "",
+                    messageSubject: "",
+                    messageContent: "",
+                });
             }
             else {
                 setStatus({ type: "error", message: resData.error || "Failed to submit message. Please try again." });
@@ -62,7 +79,13 @@ function ContactPage() {
                 type: "success",
                 message: "Thank you! Your message has been received. Our team will contact you shortly.",
             });
-            formEl.reset();
+            setFormData({
+                fullName: "",
+                emailAddress: "",
+                phoneNumber: "",
+                messageSubject: "",
+                messageContent: "",
+            });
         }
         finally {
             setLoading(false);
@@ -116,14 +139,14 @@ function ContactPage() {
                   <label htmlFor="fullName" className="block text-xs font-bold uppercase tracking-wider mb-2 text-foreground/80">
                     Full Name <span className="text-red-500">*</span>
                   </label>
-                  <input id="fullName" name="fullName" type="text" required placeholder="Enter full name" className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground focus:outline-none focus:border-primary"/>
+                  <input id="fullName" name="fullName" type="text" required value={formData.fullName} onChange={handleChange} placeholder="Enter full name" className="w-full rounded-xl border border-border bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 pointer-events-auto select-text cursor-text"/>
                 </div>
 
                 <div>
                   <label htmlFor="emailAddress" className="block text-xs font-bold uppercase tracking-wider mb-2 text-foreground/80">
                     Email Address <span className="text-red-500">*</span>
                   </label>
-                  <input id="emailAddress" name="emailAddress" type="email" required placeholder="name@example.com" className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground focus:outline-none focus:border-primary"/>
+                  <input id="emailAddress" name="emailAddress" type="email" required value={formData.emailAddress} onChange={handleChange} placeholder="name@example.com" className="w-full rounded-xl border border-border bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 pointer-events-auto select-text cursor-text"/>
                 </div>
               </div>
 
@@ -132,14 +155,14 @@ function ContactPage() {
                   <label htmlFor="phoneNumber" className="block text-xs font-bold uppercase tracking-wider mb-2 text-foreground/80">
                     Phone Number
                   </label>
-                  <input id="phoneNumber" name="phoneNumber" type="tel" placeholder="+91 98765 43210" className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground focus:outline-none focus:border-primary"/>
+                  <input id="phoneNumber" name="phoneNumber" type="tel" value={formData.phoneNumber} onChange={handleChange} placeholder="+91 98765 43210" className="w-full rounded-xl border border-border bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 pointer-events-auto select-text cursor-text"/>
                 </div>
 
                 <div>
                   <label htmlFor="messageSubject" className="block text-xs font-bold uppercase tracking-wider mb-2 text-foreground/80">
                     Subject
                   </label>
-                  <input id="messageSubject" name="messageSubject" type="text" placeholder="e.g. Tally Prime / Hardware" className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground focus:outline-none focus:border-primary"/>
+                  <input id="messageSubject" name="messageSubject" type="text" value={formData.messageSubject} onChange={handleChange} placeholder="e.g. Tally Prime / Hardware" className="w-full rounded-xl border border-border bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 pointer-events-auto select-text cursor-text"/>
                 </div>
               </div>
 
@@ -147,7 +170,7 @@ function ContactPage() {
                 <label htmlFor="messageContent" className="block text-xs font-bold uppercase tracking-wider mb-2 text-foreground/80">
                   Your Message <span className="text-red-500">*</span>
                 </label>
-                <textarea id="messageContent" name="messageContent" rows={5} required placeholder="How can we help your business?" className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground focus:outline-none focus:border-primary resize-y"/>
+                <textarea id="messageContent" name="messageContent" rows={5} required value={formData.messageContent} onChange={handleChange} placeholder="How can we help your business?" className="w-full rounded-xl border border-border bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 resize-y pointer-events-auto select-text cursor-text"/>
               </div>
 
               <button type="submit" disabled={loading} className="btn-primary w-full justify-center text-sm py-3.5 mt-2 disabled:opacity-50 cursor-pointer">
