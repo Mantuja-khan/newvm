@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { FaSearch, FaShieldAlt, FaLaptop, FaTruck, FaHeadset } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 import { FaWhatsapp } from "react-icons/fa6";
 import { PageHero } from "@/components/PageHero";
 import { SectionHeading } from "@/components/SectionHeading";
@@ -59,40 +59,6 @@ function HardwareProductsPage() {
 
     return (<>
       <PageHero title="Hardware & IT Equipment" crumb="Hardware Products"/>
-
-      {/* Trust Badges Bar */}
-      <section className="bg-slate-900 text-white py-6 border-y border-slate-800">
-        <div className="container-x grid grid-cols-2 md:grid-cols-4 gap-6 text-center md:text-left">
-          <div className="flex items-center justify-center md:justify-start gap-3">
-            <FaShieldAlt className="text-primary text-2xl shrink-0"/>
-            <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider">1 Year Warranty</h4>
-              <p className="text-[11px] text-slate-400">Certified & tested hardware</p>
-            </div>
-          </div>
-          <div className="flex items-center justify-center md:justify-start gap-3">
-            <FaLaptop className="text-primary text-2xl shrink-0"/>
-            <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider">Commercial Grade</h4>
-              <p className="text-[11px] text-slate-400">Lenovo, Dell, HP business series</p>
-            </div>
-          </div>
-          <div className="flex items-center justify-center md:justify-start gap-3">
-            <FaTruck className="text-primary text-2xl shrink-0"/>
-            <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider">Fast Delivery</h4>
-              <p className="text-[11px] text-slate-400">Safe packaging across India</p>
-            </div>
-          </div>
-          <div className="flex items-center justify-center md:justify-start gap-3">
-            <FaHeadset className="text-primary text-2xl shrink-0"/>
-            <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider">Lifetime Support</h4>
-              <p className="text-[11px] text-slate-400">Dedicated VM Solutiions helpdesk</p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       <section className="reveal py-16 bg-slate-50/50">
         <div className="container-x">

@@ -70,7 +70,10 @@ function HomePage() {
       <section className="reveal relative overflow-hidden bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/hero-cta-bg.png')" }}>
         <div className="absolute inset-0 bg-slate-900/10 pointer-events-none"/>
         <div className="absolute right-0 top-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-primary/10 blur-3xl"/>
-        <div className="absolute left-8 bottom-8 dot-pattern h-40 w-40 opacity-40"/>
+        {/* 3 Dotted Squares in Top CTA Section */}
+        <div className="absolute left-6 top-10 w-28 h-28 dot-pattern opacity-40 border border-primary/20 rounded-xl pointer-events-none -rotate-6" />
+        <div className="absolute right-12 top-16 w-36 h-36 dot-pattern opacity-35 border border-primary/20 rounded-xl pointer-events-none rotate-12 hidden md:block" />
+        <div className="absolute left-1/3 bottom-6 w-32 h-32 dot-pattern opacity-30 border border-primary/20 rounded-lg pointer-events-none rotate-3 hidden sm:block" />
         <div className="container-x relative pt-8 pb-16 md:pt-10 md:pb-24 grid lg:grid-cols-2 gap-12 items-center">
           <motion.div key={active.slug} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="order-2 lg:order-1">
             <span className="eyebrow text-xs sm:text-sm">— Welcome to VM Solutiions</span>
@@ -186,6 +189,7 @@ function HomePage() {
         </div>
       </section>
 
+
       {/* PROCESS */}
       <section className="reveal py-24">
         <div className="container-x">
@@ -204,29 +208,37 @@ function HomePage() {
       <section className="reveal py-24 bg-surface overflow-hidden">
         <div className="container-x">
           <SectionHeading eyebrow="Our Portfolio" title={<>Featured <span className="text-primary">Website Projects</span></>} subtitle="Explore websites and web applications built by VM Solutiions."/>
-          <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {PROJECTS.slice(0, 3).map((p) => (<div key={p.title} className="group bg-white rounded-none overflow-hidden border border-slate-200 hover:border-primary hover:shadow-md transition-all flex flex-col justify-between">
-                {/* Website Image with Square Edges (No Border Curve) */}
-                <div className="relative h-56 w-full overflow-hidden bg-slate-100 rounded-none">
-                  <img src={p.image} alt={p.title} loading="lazy" className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105 rounded-none"/>
-                </div>
+          <div className="mt-12">
+            <Swiper modules={[Autoplay, Pagination]} autoplay={{ delay: 3500, disableOnInteraction: false }} pagination={{ clickable: true }} loop spaceBetween={20} breakpoints={{
+            0: { slidesPerView: 2, spaceBetween: 12 },
+            640: { slidesPerView: 2, spaceBetween: 16 },
+            768: { slidesPerView: 2, spaceBetween: 20 },
+            1024: { slidesPerView: 3, spaceBetween: 24 },
+        }} className="!pb-14">
+              {PROJECTS.map((p) => (<SwiperSlide key={p.title} className="h-auto">
+                  <div className="group bg-white rounded-none overflow-hidden border border-slate-200 hover:border-primary hover:shadow-md transition-all flex flex-col justify-between h-full">
+                    {/* Website Image with Square Edges */}
+                    <div className="relative h-44 sm:h-56 w-full overflow-hidden bg-slate-100 rounded-none">
+                      <img src={p.image} alt={p.title} loading="lazy" className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105 rounded-none"/>
+                    </div>
 
-                {/* Visit Website Button */}
-                <div className="p-4 bg-white border-t border-slate-200">
-                  <h4 className="text-sm font-extrabold text-slate-900 line-clamp-1 mb-2 font-display uppercase">
-                    {p.title}
-                  </h4>
-                  {p.url ? (<a href={p.url} target="_blank" rel="noopener noreferrer" className="btn-primary w-full py-2 text-xs font-extrabold flex items-center justify-center gap-2 rounded-none tracking-wider uppercase">
-                      Visit Website <FaExternalLinkAlt className="text-[10px]"/>
-                    </a>) : (<Link to="/contact" className="btn-outline w-full py-2 text-xs font-extrabold flex items-center justify-center gap-2 rounded-none tracking-wider uppercase">
-                      Enquire Project <FaArrowRight className="text-[10px]"/>
-                    </Link>)}
-                </div>
-              </div>))}
+                    {/* Visit Website Button */}
+                    <div className="p-3 sm:p-4 bg-white border-t border-slate-200 flex flex-col flex-1 justify-between">
+                      <h4 className="text-xs sm:text-sm font-extrabold text-slate-900 line-clamp-1 mb-2 font-display uppercase">
+                        {p.title}
+                      </h4>
+                      {p.url ? (<a href={p.url} target="_blank" rel="noopener noreferrer" className="btn-primary w-full py-2 text-[10px] sm:text-xs font-extrabold flex items-center justify-center gap-1.5 sm:gap-2 rounded-none tracking-wider uppercase">
+                          Visit Website <FaExternalLinkAlt className="text-[9px] sm:text-[10px]"/>
+                        </a>) : (<Link to="/contact" className="btn-outline w-full py-2 text-[10px] sm:text-xs font-extrabold flex items-center justify-center gap-1.5 sm:gap-2 rounded-none tracking-wider uppercase">
+                          Enquire Project <FaArrowRight className="text-[9px] sm:text-[10px]"/>
+                        </Link>)}
+                    </div>
+                  </div>
+                </SwiperSlide>))}
+            </Swiper>
           </div>
         </div>
       </section>
-
 
       {/* FAQ */}
       <section className="reveal py-24">
@@ -238,8 +250,6 @@ function HomePage() {
           <FAQList />
         </div>
       </section>
-
-
 
     </>);
 }
