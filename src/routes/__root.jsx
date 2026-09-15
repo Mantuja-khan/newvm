@@ -6,6 +6,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { FloatingActions } from "@/components/FloatingActions";
+import { PageLoader } from "@/components/PageLoader";
 function NotFoundComponent() {
     return (<div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
@@ -88,6 +89,7 @@ function RootComponent() {
         return () => observer.disconnect();
     }, [pathname]);
     return (<QueryClientProvider client={queryClient}>
+      <PageLoader />
       <Header />
       <main>
         <Outlet />

@@ -126,7 +126,7 @@ app.use((req, res, next) => {
 
   const candidates = [
     path.join(outputPublicPath, "index.html"),
-    path.join(distPath, "index.html"),
+    path.join(distPath, "index.html"), 
     path.join(__dirname, "..", "index.html"),
   ];
 

@@ -145,7 +145,7 @@ export const CLIENT_PORTFOLIO = [
         title: "Niraaj Pack Tech",
         category: "Packaging Industry Web Application",
         image: imgNiraajPack,
-        url: "https://niraajpacktech.com/",
+        url: "https://niraajpack.com/",
     },
     {
         title: "Trivoxo Toys",
@@ -157,13 +157,13 @@ export const CLIENT_PORTFOLIO = [
         title: "Sukoh Tech",
         category: "IT Solutions & Software Development Portal",
         image: imgSukohTech,
-        url: "https://sukoh-tech.com/",
+        url: "https://sukohtech.com/",
     },
     {
         title: "Garv Enterprises",
         category: "Industrial Equipment & Hardware Site",
         image: imgGarvEnterprises,
-        url: "https://garventerprises.com/",
+        url: "https://garventerprises.in/",
     },
     {
         title: "Ojas Pharma",
@@ -175,7 +175,7 @@ export const CLIENT_PORTFOLIO = [
         title: "Jalvinder Computers",
         category: "IT Retail & Hardware Hardware Store",
         image: imgJalvinderComputer,
-        url: "https://jalvindercomputers.com/",
+        url: "https://jalvindercomputer.com/",
     },
     {
         title: "Rengo Automotives",
