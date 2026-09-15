@@ -157,7 +157,7 @@ export const CLIENT_PORTFOLIO = [
         title: "Sukoh Tech",
         category: "IT Solutions & Software Development Portal",
         image: imgSukohTech,
-        url: "https://sukohtech.com/",
+        url: "https://sukohtechnologies.com/",
     },
     {
         title: "Garv Enterprises",
