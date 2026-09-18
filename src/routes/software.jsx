@@ -207,26 +207,26 @@ function SoftwareProductsPage() {
                 Tally Prime, BUSY & <span className="text-primary">Tally on AWS Cloud</span>
               </>
             }
-            subtitle="Genuine accounting software           {/* Toggle View Tabs: Catalog Grid vs Full Price Matrix */}
+            subtitle="Genuine accounting software"
+          />
+          {/* Toggle View Tabs: Catalog Grid vs Full Price Matrix */}
           <div className="mt-8 flex justify-center">
             <div className="bg-white p-1.5 rounded-2xl shadow-sm inline-flex gap-2">
               <button
                 onClick={() => setActiveTab("catalog")}
-                className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                  activeTab === "catalog"
+                className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all ${activeTab === "catalog"
                     ? "bg-slate-900 text-white shadow-md"
                     : "text-slate-600 hover:bg-slate-100"
-                }`}
+                  }`}
               >
                 Products Catalog ({filteredProducts.length})
               </button>
               <button
                 onClick={() => setActiveTab("pricing-tables")}
-                className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-                  activeTab === "pricing-tables"
+                className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${activeTab === "pricing-tables"
                     ? "bg-slate-900 text-white shadow-md"
                     : "text-slate-600 hover:bg-slate-100"
-                }`}
+                  }`}
               >
                 <FaTable className="text-emerald-400" /> Full Price Matrix (Tally / BUSY / AWS)
               </button>
@@ -249,11 +249,10 @@ function SoftwareProductsPage() {
                     <button
                       key={c.id}
                       onClick={() => setSelectedCategory(c.id)}
-                      className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-                        selectedCategory === c.id
+                      className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${selectedCategory === c.id
                           ? "bg-primary text-white shadow-md shadow-primary/20"
                           : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                      }`}
+                        }`}
                     >
                       {c.name}
                     </button>
