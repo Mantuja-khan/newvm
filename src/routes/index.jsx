@@ -424,18 +424,17 @@ function HomePage() {
               loop
               spaceBetween={20}
               breakpoints={{
-                0: { slidesPerView: 2, spaceBetween: 12 },
-                640: { slidesPerView: 2, spaceBetween: 16 },
-                768: { slidesPerView: 2, spaceBetween: 20 },
+                0: { slidesPerView: 1, spaceBetween: 16 },
+                640: { slidesPerView: 2, spaceBetween: 20 },
                 1024: { slidesPerView: 3, spaceBetween: 24 },
               }}
               className="!pb-14"
             >
               {PROJECTS.map((p) => (
                 <SwiperSlide key={p.title} className="h-auto">
-                  <div className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all flex flex-col justify-between h-full">
+                  <div className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all flex flex-col justify-between h-full border border-slate-100">
                     {/* Website Image Container - Zoomed out so entire layout is visible */}
-                    <div className="relative h-48 sm:h-60 w-full overflow-hidden bg-slate-50/80 flex items-center justify-center p-2.5 sm:p-3">
+                    <div className="relative h-52 sm:h-60 w-full overflow-hidden bg-slate-50/80 flex items-center justify-center p-3 sm:p-4">
                       <img
                         src={p.image}
                         alt={p.title}
@@ -444,9 +443,9 @@ function HomePage() {
                       />
                     </div>
 
-                    {/* Visit Website Button */}
-                    <div className="p-3 sm:p-4 bg-white flex flex-col flex-1 justify-between">
-                      <h4 className="text-xs sm:text-sm font-extrabold text-slate-900 line-clamp-1 mb-2.5 font-display uppercase">
+                    {/* Content: Title and View Website Button */}
+                    <div className="p-4 sm:p-5 bg-white flex flex-col flex-1 justify-between gap-3">
+                      <h4 className="text-sm sm:text-base font-extrabold text-slate-900 line-clamp-1 font-display uppercase tracking-wide">
                         {p.title}
                       </h4>
                       {p.url ? (
@@ -454,16 +453,16 @@ function HomePage() {
                           href={p.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="btn-primary w-full py-2 text-[10px] sm:text-xs font-extrabold flex items-center justify-center gap-1.5 sm:gap-2 rounded-xl tracking-wider uppercase"
+                          className="btn-primary w-full py-2.5 text-xs font-bold flex items-center justify-center gap-2 rounded-xl tracking-wider uppercase shadow-sm"
                         >
-                          Visit Website <FaExternalLinkAlt className="text-[9px] sm:text-[10px]" />
+                          View Website <FaExternalLinkAlt className="text-xs" />
                         </a>
                       ) : (
                         <Link
                           to="/contact"
-                          className="btn-outline w-full py-2 text-[10px] sm:text-xs font-extrabold flex items-center justify-center gap-1.5 sm:gap-2 rounded-xl tracking-wider uppercase"
+                          className="btn-primary w-full py-2.5 text-xs font-bold flex items-center justify-center gap-2 rounded-xl tracking-wider uppercase shadow-sm"
                         >
-                          Enquire Project <FaArrowRight className="text-[9px] sm:text-[10px]" />
+                          View Website <FaExternalLinkAlt className="text-xs" />
                         </Link>
                       )}
                     </div>
@@ -471,6 +470,16 @@ function HomePage() {
                 </SwiperSlide>
               ))}
             </Swiper>
+
+            {/* View All Websites Button */}
+            <div className="mt-4 flex justify-center">
+              <Link
+                to="/services/web-development"
+                className="btn-primary inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl text-sm font-extrabold tracking-wide uppercase shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all"
+              >
+                View All Websites <FaArrowRight className="text-xs" />
+              </Link>
+            </div>
           </div>
         </div>
       </section>

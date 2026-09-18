@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { FaCheckCircle, FaArrowRight, FaPhoneAlt } from "react-icons/fa";
+import { FaCheckCircle, FaArrowRight, FaPhoneAlt, FaExternalLinkAlt } from "react-icons/fa";
 import { PageHero } from "@/components/PageHero";
 import { SectionHeading } from "@/components/SectionHeading";
 import { TextReveal } from "@/components/TextReveal";
@@ -163,48 +163,47 @@ function ServiceDetail() {
               }
               subtitle="A glimpse of websites and web apps our team has built for happy clients."
             />
-            <div className="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {PROJECTS.map((p) => {
-                const CardContent = (
-                  <>
-                    <div className="relative h-52 sm:h-56 w-full bg-slate-50/80 flex items-center justify-center p-2.5 sm:p-3 overflow-hidden">
-                      <img
-                        src={p.image}
-                        alt={p.title}
-                        loading="lazy"
-                        className="w-full h-full object-contain object-top rounded-lg transition-transform duration-300 group-hover:scale-[1.03]"
-                      />
-                    </div>
-                    <div className="p-5">
-                      <h3 className="text-base font-semibold text-slate-800 leading-snug group-hover:text-primary transition-colors">
-                        {p.title}
-                      </h3>
-                      <p className="text-xs text-muted-foreground mt-1">{p.category}</p>
-                    </div>
-                  </>
-                );
-                if (p.url) {
-                  return (
-                    <a
-                      key={p.title}
-                      href={p.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group block relative overflow-hidden rounded-2xl bg-white shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-card)] transition-all"
-                    >
-                      {CardContent}
-                    </a>
-                  );
-                }
-                return (
-                  <div
-                    key={p.title}
-                    className="group relative overflow-hidden rounded-2xl bg-white shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-card)] transition-all"
-                  >
-                    {CardContent}
+            <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {PROJECTS.map((p) => (
+                <div
+                  key={p.title}
+                  className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all flex flex-col justify-between h-full border border-slate-100"
+                >
+                  {/* Website Image Container */}
+                  <div className="relative h-52 sm:h-56 w-full bg-slate-50/80 flex items-center justify-center p-3 sm:p-4 overflow-hidden">
+                    <img
+                      src={p.image}
+                      alt={p.title}
+                      loading="lazy"
+                      className="w-full h-full object-contain object-top rounded-lg transition-transform duration-500 group-hover:scale-105"
+                    />
                   </div>
-                );
-              })}
+
+                  {/* Content: Title & View Website Button */}
+                  <div className="p-4 sm:p-5 bg-white flex flex-col flex-1 justify-between gap-3">
+                    <h3 className="text-sm sm:text-base font-extrabold text-slate-900 line-clamp-1 font-display uppercase tracking-wide">
+                      {p.title}
+                    </h3>
+                    {p.url ? (
+                      <a
+                        href={p.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-primary w-full py-2.5 text-xs font-bold flex items-center justify-center gap-2 rounded-xl tracking-wider uppercase shadow-sm"
+                      >
+                        View Website <FaExternalLinkAlt className="text-xs" />
+                      </a>
+                    ) : (
+                      <Link
+                        to="/contact"
+                        className="btn-primary w-full py-2.5 text-xs font-bold flex items-center justify-center gap-2 rounded-xl tracking-wider uppercase shadow-sm"
+                      >
+                        View Website <FaExternalLinkAlt className="text-xs" />
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </section>
