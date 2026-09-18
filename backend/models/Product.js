@@ -23,7 +23,7 @@ const productSchema = new mongoose.Schema(
     inStock: { type: Boolean, default: true },
     specs: { type: mongoose.Schema.Types.Mixed, default: {} },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.models.Product || mongoose.model("Product", productSchema);

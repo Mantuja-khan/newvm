@@ -234,13 +234,20 @@ export const submitContact = async (req, res) => {
         };
 
         await transporter.sendMail(mailOptions);
-        console.log(`✉️ Email successfully sent to ${recipientEmail} for inquiry from ${submission.email}`);
+        console.log(
+          `✉️ Email successfully sent to ${recipientEmail} for inquiry from ${submission.email}`,
+        );
       } catch (mailErr) {
-        console.error("Background email notice failed (submission recorded in DB):", mailErr.message);
+        console.error(
+          "Background email notice failed (submission recorded in DB):",
+          mailErr.message,
+        );
       }
     })();
   } else {
-    console.log(`Saved contact form submission for ${recipientEmail} into MongoDB (GMAIL_APP_PASSWORD not configured):`, submission);
+    console.log(
+      `Saved contact form submission for ${recipientEmail} into MongoDB (GMAIL_APP_PASSWORD not configured):`,
+      submission,
+    );
   }
 };
-

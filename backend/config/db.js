@@ -19,7 +19,9 @@ export const connectDB = async () => {
     console.log(`🍃 MongoDB Connected: ${conn.connection.host}/${conn.connection.name}`);
     return conn;
   } catch (error) {
-    console.warn(`⚠️ Primary MONGO_URI connection error (${error.message}). Connecting to local MongoDB...`);
+    console.warn(
+      `⚠️ Primary MONGO_URI connection error (${error.message}). Connecting to local MongoDB...`,
+    );
     try {
       await mongoose.disconnect();
       const conn = await mongoose.connect("mongodb://127.0.0.1:27017/vmsolutiions", {

@@ -8,101 +8,169 @@ import { HARDWARE_CATEGORIES, PRODUCTS, BRAND } from "@/data/site";
 import { API_BASE } from "@/config/api";
 
 export const Route = createFileRoute("/hardware")({
-    head: () => ({
-        meta: [
-            { title: "Hardware Products — Refurbished Laptops & Desktops | VM Solutiions" },
-            { name: "description", content: "Buy certified refurbished laptops, mini desktop PCs, all-in-one PCs & printers at honest prices with 1 year warranty." },
-        ],
-    }),
-    component: HardwareProductsPage,
+  head: () => ({
+    meta: [
+      { title: "Hardware Products — Refurbished Laptops & Desktops | VM Solutiions" },
+      {
+        name: "description",
+        content:
+          "Buy certified refurbished laptops, mini desktop PCs, all-in-one PCs & printers at honest prices with 1 year warranty.",
+      },
+    ],
+  }),
+  component: HardwareProductsPage,
 });
 
 function HardwareProductsPage() {
-    const defaultHw = PRODUCTS.filter((p) => p.type === "hardware" || ["laptops", "desktops", "workstations", "accessories"].includes(p.cat));
-    const [productList, setProductList] = useState(defaultHw);
-    const [selectedCategory, setSelectedCategory] = useState("all");
-    const [searchQuery, setSearchQuery] = useState("");
+  const defaultHw = PRODUCTS.filter(
+    (p) =>
+      p.type === "hardware" ||
+      ["laptops", "desktops", "workstations", "accessories"].includes(p.cat),
+  );
+  const [productList, setProductList] = useState(defaultHw);
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const res = await fetch(`${API_BASE}/products`);
-                if (res.ok) {
-                    const data = await res.json();
-                    if (Array.isArray(data)) {
-                        const combinedMap = new Map();
-                        defaultHw.forEach((p) => combinedMap.set(p.id || p.name, p));
-                        data.forEach((p) => {
-                            if (p.type === "hardware" || ["laptops", "desktops", "workstations", "accessories"].includes(p.cat)) {
-                                combinedMap.set(p.id || p.name, p);
-                            }
-                        });
-                        setProductList(Array.from(combinedMap.values()));
-                    }
-                }
-            }
-            catch (err) {
-                console.log("Could not load hardware products from backend, using defaults.");
-            }
-        };
-        fetchProducts();
-    }, []);
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/products`);
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data)) {
+            const combinedMap = new Map();
+            defaultHw.forEach((p) => combinedMap.set(p.id || p.name, p));
+            data.forEach((p) => {
+              if (
+                p.type === "hardware" ||
+                ["laptops", "desktops", "workstations", "accessories"].includes(p.cat)
+              ) {
+                combinedMap.set(p.id || p.name, p);
+              }
+            });
+            setProductList(Array.from(combinedMap.values()));
+          }
+        }
+      } catch (err) {
+        console.log("Could not load hardware products from backend, using defaults.");
+      }
+    };
+    fetchProducts();
+  }, []);
 
-    const filteredProducts = productList.filter((p) => {
-        const matchesCategory = selectedCategory === "all" || p.cat === selectedCategory;
-        const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            p.tag.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (p.brand && p.brand.toLowerCase().includes(searchQuery.toLowerCase())) ||
-            p.desc.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesCategory && matchesSearch;
-    });
+  const filteredProducts = productList.filter((p) => {
+    const matchesCategory = selectedCategory === "all" || p.cat === selectedCategory;
+    const matchesSearch =
+      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.tag.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (p.brand && p.brand.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      p.desc.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
-    return (<>
-      <PageHero title="Hardware & IT Equipment" crumb="Hardware Products"/>
+  return (
+    <>
+      <PageHero title="Hardware & IT Equipment" crumb="Hardware Products" />
 
       <section className="reveal py-16 bg-slate-50/50">
         <div className="container-x">
-          <SectionHeading eyebrow="Explore Hardware" title={<>Commercial <span className="text-primary">Laptops & Desktops</span></>} subtitle="Premium refurbished and new laptops, All-in-One PCs, mini desktops, and workstations tested for office accounting & enterprise workloads."/>
+          <SectionHeading
+            eyebrow="Explore Hardware"
+            title={
+              <>
+                Commercial <span className="text-primary">Laptops & Desktops</span>
+              </>
+            }
+            subtitle="Premium refurbished and new laptops, All-in-One PCs, mini desktops, and workstations tested for office accounting & enterprise workloads."
+          />
 
           {/* Search & Filter Bar */}
-          <div className="mt-10 flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="mt-10 flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 rounded-2xl shadow-sm">
             {/* Category Pills */}
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 w-full md:w-auto">
-              {HARDWARE_CATEGORIES.map((c) => (<button key={c.id} onClick={() => setSelectedCategory(c.id)} className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${selectedCategory === c.id
-                ? "bg-primary text-white shadow-md shadow-primary/20"
-                : "bg-slate-100 text-slate-700 hover:bg-slate-200"}`}>
+              {HARDWARE_CATEGORIES.map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => setSelectedCategory(c.id)}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                    selectedCategory === c.id
+                      ? "bg-primary text-white shadow-md shadow-primary/20"
+                      : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                  }`}
+                >
                   {c.name}
-                </button>))}
+                </button>
+              ))}
             </div>
 
             {/* Search Input */}
             <div className="relative w-full md:w-72">
-              <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"/>
-              <input type="text" placeholder="Search Lenovo, IdeaCentre, i5..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-9 pr-4 py-2 text-xs text-slate-900 border border-slate-200 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50 focus:bg-white transition-all select-text cursor-text pointer-events-auto"/>
+              <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none" />
+              <input
+                type="text"
+                placeholder="Search Lenovo, IdeaCentre, i5..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-4 py-2 text-xs text-slate-900 bg-slate-100/90 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all select-text cursor-text pointer-events-auto"
+              />
             </div>
           </div>
 
           {/* Product Grid */}
-          {filteredProducts.length === 0 ? (<div className="mt-12 text-center py-16 bg-white rounded-2xl border border-slate-200">
-              <p className="text-slate-500 font-medium">No hardware products match your search criteria.</p>
-              <button onClick={() => { setSelectedCategory("all"); setSearchQuery(""); }} className="mt-4 btn-outline py-1.5 px-4 text-xs font-semibold rounded-lg">
+          {filteredProducts.length === 0 ? (
+            <div className="mt-12 text-center py-16 bg-white rounded-2xl shadow-sm">
+              <p className="text-slate-500 font-medium">
+                No hardware products match your search criteria.
+              </p>
+              <button
+                onClick={() => {
+                  setSelectedCategory("all");
+                  setSearchQuery("");
+                }}
+                className="mt-4 btn-outline py-1.5 px-4 text-xs font-semibold rounded-lg"
+              >
                 Clear Filters
               </button>
-            </div>) : (<div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            </div>
+          ) : (
+            <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredProducts.map((p) => {
                 const prodId = p.id || p.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-                const whatsappMsg = encodeURIComponent(`Hello VM Solutiions, I am interested in purchasing:\n\n*Product:* ${p.name}\n*Price:* ${p.price}\n*MRP:* ${p.originalPrice || ""}\n\nPlease share availability & details.`);
-                return (<div key={prodId} className="group bg-white rounded-xl border border-slate-200/90 p-5 shadow-[0_2px_15px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_16px_32px_-8px_rgba(0,0,0,0.12)] transition-all flex flex-col justify-between relative">
+                const whatsappMsg = encodeURIComponent(
+                  `Hello VM Solutiions, I am interested in purchasing:\n\n*Product:* ${p.name}\n*Price:* ${p.price}\n*MRP:* ${p.originalPrice || ""}\n\nPlease share availability & details.`,
+                );
+                return (
+                  <div
+                    key={prodId}
+                    className="group bg-white rounded-xl p-5 shadow-[0_2px_15px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_16px_32px_-8px_rgba(0,0,0,0.12)] transition-all flex flex-col justify-between relative"
+                  >
                     <div className="flex justify-end items-center">
-                      {p.discount ? (<span className="text-emerald-600 font-black text-sm tracking-wide">
+                      {p.discount ? (
+                        <span className="text-emerald-600 font-black text-sm tracking-wide">
                           {p.discount}
-                        </span>) : (<span className="text-xs font-bold text-slate-400 uppercase">{p.brand || "Hardware"}</span>)}
+                        </span>
+                      ) : (
+                        <span className="text-xs font-bold text-slate-400 uppercase">
+                          {p.brand || "Hardware"}
+                        </span>
+                      )}
                     </div>
 
                     {/* Centered Product Image Container */}
                     <Link to="/hardware/$id" params={{ id: prodId }} className="block my-3">
                       <div className="h-52 w-full bg-white rounded-lg flex items-center justify-center p-2 overflow-hidden">
-                        {p.image ? (<img src={p.image} alt={p.name} loading="lazy" className="max-h-48 w-auto object-contain transition-transform duration-300 group-hover:scale-105"/>) : (<div className="text-slate-300 text-xs font-semibold">No Image Available</div>)}
+                        {p.image ? (
+                          <img
+                            src={p.image}
+                            alt={p.name}
+                            loading="lazy"
+                            className="max-h-48 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                          />
+                        ) : (
+                          <div className="text-slate-300 text-xs font-semibold">
+                            No Image Available
+                          </div>
+                        )}
                       </div>
                     </Link>
 
@@ -119,22 +187,32 @@ function HardwareProductsPage() {
                         <span className="text-2xl font-black text-emerald-600 tracking-tight">
                           {p.price}
                         </span>
-                        {p.originalPrice && (<span className="text-sm font-semibold text-red-500 line-through">
+                        {p.originalPrice && (
+                          <span className="text-sm font-semibold text-red-500 line-through">
                             {p.originalPrice}
-                          </span>)}
+                          </span>
+                        )}
                       </div>
                     </div>
 
                     {/* WhatsApp SEND ENQUIRY Button */}
                     <div className="mt-5">
-                      <a href={`https://wa.me/${BRAND.phoneRaw}?text=${whatsappMsg}`} target="_blank" rel="noopener noreferrer" className="w-full bg-[#1cd466] hover:bg-[#18c35b] text-white py-3 px-4 rounded-full font-extrabold text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md shadow-emerald-500/20 active:scale-[0.98]">
-                        <FaWhatsapp className="text-xl"/> SEND ENQUIRY
+                      <a
+                        href={`https://wa.me/${BRAND.phoneRaw}?text=${whatsappMsg}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full bg-[#1cd466] hover:bg-[#18c35b] text-white py-3 px-4 rounded-full font-extrabold text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md shadow-emerald-500/20 active:scale-[0.98]"
+                      >
+                        <FaWhatsapp className="text-xl" /> SEND ENQUIRY
                       </a>
                     </div>
-                  </div>);
-            })}
-            </div>)}
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
-    </>);
+    </>
+  );
 }

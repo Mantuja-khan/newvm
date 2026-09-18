@@ -10,7 +10,7 @@ const reviewSchema = new mongoose.Schema(
     slug: { type: String, default: "general" },
     date: { type: String, default: () => new Date().toISOString() },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.models.Review || mongoose.model("Review", reviewSchema);

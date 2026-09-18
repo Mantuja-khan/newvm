@@ -64,10 +64,14 @@ async function seedDatabase() {
       console.log(`✉️ Found ${contactsData.length} contact submissions in backend/contacts.json`);
       await Contact.deleteMany({});
       await Contact.insertMany(contactsData);
-      console.log(`✅ Successfully seeded ${contactsData.length} contact records into MongoDB Atlas!`);
+      console.log(
+        `✅ Successfully seeded ${contactsData.length} contact records into MongoDB Atlas!`,
+      );
     }
 
-    console.log("\n🎉 ALL JSON DATA HAS BEEN MIGRATED AND CONNECTED TO MONGODB ATLAS SUCCESSFULLY!");
+    console.log(
+      "\n🎉 ALL JSON DATA HAS BEEN MIGRATED AND CONNECTED TO MONGODB ATLAS SUCCESSFULLY!",
+    );
     process.exit(0);
   } catch (error) {
     console.error("❌ MongoDB Atlas Seeding Error:", error.message);

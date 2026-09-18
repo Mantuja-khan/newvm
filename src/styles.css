@@ -137,7 +137,10 @@ h4 {
   font-size: 0.9rem;
   letter-spacing: 0.01em;
   box-shadow: var(--shadow-glow);
-  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    background 0.3s ease;
   border: none;
   cursor: pointer;
 }
@@ -229,7 +232,9 @@ h4 {
 .reveal {
   opacity: 0;
   transform: translateY(24px);
-  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  transition:
+    opacity 0.8s ease-out,
+    transform 0.8s ease-out;
 }
 
 .reveal.is-visible {
@@ -257,7 +262,9 @@ h4 {
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  transition: opacity 0.4s ease, visibility 0.4s ease;
+  transition:
+    opacity 0.4s ease,
+    visibility 0.4s ease;
 }
 
 .page-loader-overlay.fade-out {
@@ -356,6 +363,8 @@ h4 {
     text-shadow: 0 0 12px rgba(2, 132, 199, 0.3);
   }
   100% {
-    text-shadow: 0 0 28px rgba(2, 132, 199, 0.85), 0 0 15px rgba(250, 204, 21, 0.5);
+    text-shadow:
+      0 0 28px rgba(2, 132, 199, 0.85),
+      0 0 15px rgba(250, 204, 21, 0.5);
   }
 }

@@ -10,7 +10,7 @@ const contactSchema = new mongoose.Schema(
     message: { type: String, required: true },
     date: { type: String, default: () => new Date().toISOString() },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.models.Contact || mongoose.model("Contact", contactSchema);

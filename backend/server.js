@@ -33,7 +33,10 @@ app.use((req, res, next) => {
   }
   res.setHeader("Access-Control-Allow-Credentials", "true");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH");
-  res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, x-admin-token");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization, x-admin-token",
+  );
 
   if (req.method === "OPTIONS") {
     return res.status(200).end();
@@ -126,7 +129,7 @@ app.use((req, res, next) => {
 
   const candidates = [
     path.join(outputPublicPath, "index.html"),
-    path.join(distPath, "index.html"), 
+    path.join(distPath, "index.html"),
     path.join(__dirname, "..", "index.html"),
   ];
 
@@ -134,13 +137,21 @@ app.use((req, res, next) => {
     if (fs.existsSync(indexPath)) {
       return res.sendFile(indexPath, (err) => {
         if (err && !res.headersSent) {
-          return res.status(200).send("<!DOCTYPE html><html><head><title>VM Solutiions</title></head><body><div id='root'></div></body></html>");
+          return res
+            .status(200)
+            .send(
+              "<!DOCTYPE html><html><head><title>VM Solutiions</title></head><body><div id='root'></div></body></html>",
+            );
         }
       });
     }
   }
 
-  return res.status(200).send("<!DOCTYPE html><html><head><title>VM Solutiions</title></head><body><div id='root'></div></body></html>");
+  return res
+    .status(200)
+    .send(
+      "<!DOCTYPE html><html><head><title>VM Solutiions</title></head><body><div id='root'></div></body></html>",
+    );
 });
 
 // Error Handler
@@ -151,6 +162,8 @@ connectDB().then(() => {
   app.listen(PORT, () => {
     console.log(`🚀 VM Solutiions Backend running on port ${PORT}`);
     console.log(`🌐 API Domain: https://api.vmsolutiions.com/api`);
-    console.log(`🍃 MongoDB Connection: ${mongoose.connection.readyState === 1 ? "CONNECTED (Active)" : "Connecting..."}`);
+    console.log(
+      `🍃 MongoDB Connection: ${mongoose.connection.readyState === 1 ? "CONNECTED (Active)" : "Connecting..."}`,
+    );
   });
 });

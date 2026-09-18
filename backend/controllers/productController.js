@@ -65,13 +65,18 @@ export const saveBulkOrSingleProducts = async (req, res) => {
     // Single product
     const newProduct = {
       ...payload,
-      id: payload.id || `${payload.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${Date.now().toString(36)}`,
+      id:
+        payload.id ||
+        `${payload.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${Date.now().toString(36)}`,
       images: payload.images && payload.images.length > 0 ? payload.images : [payload.image || ""],
       features: payload.features || [],
       specs: payload.specs || {},
     };
 
-    const saved = await Product.findOneAndUpdate({ id: newProduct.id }, newProduct, { upsert: true, new: true });
+    const saved = await Product.findOneAndUpdate({ id: newProduct.id }, newProduct, {
+      upsert: true,
+      new: true,
+    });
     res.status(201).json({ success: true, message: "Product saved successfully", product: saved });
   } catch (error) {
     console.error("Error in saveBulkOrSingleProducts:", error);
@@ -88,7 +93,9 @@ export const createProduct = async (req, res) => {
     const payload = req.body;
     const newProduct = {
       ...payload,
-      id: payload.id || `${payload.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${Date.now().toString(36)}`,
+      id:
+        payload.id ||
+        `${payload.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${Date.now().toString(36)}`,
       type: payload.type || "hardware",
       cat: payload.cat || "desktops",
       images: payload.images && payload.images.length > 0 ? payload.images : [payload.image || ""],
@@ -98,7 +105,9 @@ export const createProduct = async (req, res) => {
     };
 
     const created = await Product.create(newProduct);
-    res.status(201).json({ success: true, message: "Hardware product created successfully", product: created });
+    res
+      .status(201)
+      .json({ success: true, message: "Hardware product created successfully", product: created });
   } catch (error) {
     console.error("Error in createProduct:", error);
     res.status(500).json({ error: "Failed to create hardware product" });
@@ -114,7 +123,11 @@ export const updateProduct = async (req, res) => {
     const targetId = req.params.id;
     const payload = req.body;
 
-    const updated = await Product.findOneAndUpdate({ id: targetId }, { $set: payload }, { new: true });
+    const updated = await Product.findOneAndUpdate(
+      { id: targetId },
+      { $set: payload },
+      { new: true },
+    );
     if (updated) {
       return res.json({ success: true, message: "Product updated successfully", product: updated });
     }
