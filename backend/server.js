@@ -24,8 +24,8 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 
 const allowedOrigins = [
-  "https://vmsolutions.com",
-  "https://www.vmsolutions.com",
+  "https://vmsolutiions.com",
+  "https://www.vmsolutiions.com",
   "https://vmsolutiions.com",
   "https://www.vmsolutiions.com",
   "http://localhost:8081",
