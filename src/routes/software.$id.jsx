@@ -45,6 +45,8 @@ function SoftwareDetailPage() {
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
 
+  const [relatedProducts, setRelatedProducts] = useState([]);
+
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -54,18 +56,25 @@ function SoftwareDetailPage() {
           const data = await res.json();
           if (data && !data.error && data.name) {
             setProduct(data);
-            return;
+          }
+        }
+
+        // Fetch related products from MongoDB
+        const allRes = await fetch(`${API_BASE}/products`);
+        if (allRes.ok) {
+          const allData = await allRes.json();
+          if (Array.isArray(allData)) {
+            const related = allData
+              .filter((p) => (p.id !== id && (p.type === "software" || p.type === "cloud")))
+              .slice(0, 3);
+            setRelatedProducts(related);
           }
         }
       } catch (err) {
-        console.log("Error fetching software product from backend, trying static list.");
+        console.error("Error fetching software product from MongoDB:", err);
+      } finally {
+        setLoading(false);
       }
-
-      const found = PRODUCTS.find(
-        (p) => p.id === id || p.name.toLowerCase().replace(/[^a-z0-9]+/g, "-") === id,
-      );
-      if (found) setProduct(found);
-      setLoading(false);
     };
     fetchProduct();
   }, [id]);
@@ -136,10 +145,6 @@ function SoftwareDetailPage() {
   const whatsappMsg = encodeURIComponent(
     `Hello VM Solutiions, I am interested in purchasing:\n\n*Product:* ${product.name}\n*Price:* ${product.price}\n*Original MRP:* ${product.originalPrice || ""}\n*Tag:* ${product.tag}\n\nPlease share license availability & setup details.`,
   );
-
-  const relatedProducts = PRODUCTS.filter(
-    (p) => (p.cat === product.cat || p.type === product.type) && p.name !== product.name,
-  ).slice(0, 3);
 
   const displayFeatures =
     typeof product.features === "string"

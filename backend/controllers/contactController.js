@@ -88,10 +88,10 @@ export const submitContact = async (req, res) => {
         const replySubject = encodeURIComponent(`Re: ${submission.subject}`);
 
         const mailOptions = {
-          from: `"VM Solutiions Inquiry" <${recipientEmail}>`,
+          from: `"VM Solutiions" <${recipientEmail}>`,
           replyTo: `"${submission.name}" <${submission.email}>`,
           to: recipientEmail,
-          subject: `🔔 [Website Inquiry] ${submission.subject} - ${submission.name}`,
+          subject: `[Inquiry] ${submission.subject} — ${submission.name}`,
           attachments,
           html: `
             <!DOCTYPE html>
@@ -99,35 +99,27 @@ export const submitContact = async (req, res) => {
             <head>
               <meta charset="utf-8">
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>New Website Inquiry - VM Solutiions</title>
+              <title>Website Inquiry - ${submission.name}</title>
             </head>
-            <body style="margin: 0; padding: 0; background-color: #f1f5f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-font-smoothing: antialiased; color: #1e293b;">
-              <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f1f5f9; padding: 30px 15px;">
+            <body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: #0f172a;">
+              <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f8fafc; padding: 36px 16px;">
                 <tr>
                   <td align="center">
-                    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 620px; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0;">
+                    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 580px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
                       
-                      <!-- Header Bar with Gradient & Logo -->
+                      <!-- Header -->
                       <tr>
-                        <td style="background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0284c7 100%); padding: 28px 32px; text-align: center;">
+                        <td style="padding: 20px 28px; border-bottom: 1px solid #f1f5f9; background-color: #ffffff;">
                           <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
                             <tr>
-                              <td align="center">
-                                ${
-                                  logoPath
-                                    ? `<img src="cid:vmsolutionlogo" alt="VM Solutiions Logo" style="max-height: 52px; width: auto; height: auto; display: block; border: 0; margin-bottom: 12px;" />`
-                                    : `<img src="https://vmsolutiions.com/logo.png" alt="VM Solutiions Logo" style="max-height: 52px; width: auto; height: auto; display: block; border: 0; margin-bottom: 12px;" />`
-                                }
+                              <td style="vertical-align: middle;">
+                                <div style="font-size: 17px; font-weight: 700; color: #0f172a; letter-spacing: -0.2px;">VM Solutiions</div>
+                                <div style="font-size: 11px; color: #64748b; margin-top: 1px;">IT Infrastructure & Software Solutions</div>
                               </td>
-                            </tr>
-                            <tr>
-                              <td align="center" style="color: #ffffff; font-size: 22px; font-weight: 700; letter-spacing: 0.5px; padding-top: 4px;">
-                                New Website Inquiry
-                              </td>
-                            </tr>
-                            <tr>
-                              <td align="center" style="color: #93c5fd; font-size: 13px; font-weight: 500; padding-top: 4px;">
-                                Received from VM Solutiions Contact Form
+                              <td align="right" style="vertical-align: middle;">
+                                <span style="display: inline-block; font-size: 11px; font-weight: 600; color: #0369a1; background-color: #f0f9ff; border: 1px solid #e0f2fe; padding: 3px 9px; border-radius: 4px;">
+                                  Website Inquiry
+                                </span>
                               </td>
                             </tr>
                           </table>
@@ -136,76 +128,59 @@ export const submitContact = async (req, res) => {
 
                       <!-- Main Body Content -->
                       <tr>
-                        <td style="padding: 32px 28px 24px 28px;">
+                        <td style="padding: 28px 28px 24px 28px;">
                           
-                          <!-- Quick Notification Banner -->
-                          <div style="background-color: #f0f9ff; border-left: 4px solid #0284c7; padding: 14px 18px; border-radius: 8px; margin-bottom: 24px;">
-                            <span style="font-weight: 700; color: #0369a1; font-size: 14px;">Inquiry Notification</span>
-                            <p style="margin: 4px 0 0 0; font-size: 13px; color: #0c4a6e;">You have received a new contact request from your website visitor.</p>
+                          <div style="font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 6px; line-height: 1.3;">
+                            ${submission.subject}
+                          </div>
+                          <div style="font-size: 13px; color: #64748b; margin-bottom: 22px;">
+                            Received via website contact form on ${formattedDate}
                           </div>
 
                           <!-- Contact Details Grid -->
-                          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 24px; padding: 16px 20px;">
-                            <tr>
-                              <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9; width: 35%; font-size: 13px; font-weight: 600; color: #64748b;">
-                                👤 Sender Name
+                          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse; margin-bottom: 22px; border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden;">
+                            <tr style="background-color: #f8fafc;">
+                              <td style="padding: 9px 14px; font-size: 13px; font-weight: 600; color: #475569; width: 28%; border-bottom: 1px solid #e2e8f0;">
+                                Name
                               </td>
-                              <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9; font-size: 14px; font-weight: 700; color: #0f172a;">
+                              <td style="padding: 9px 14px; font-size: 13px; font-weight: 600; color: #0f172a; border-bottom: 1px solid #e2e8f0;">
                                 ${submission.name}
                               </td>
                             </tr>
                             <tr>
-                              <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; font-weight: 600; color: #64748b;">
-                                ✉️ Email Address
+                              <td style="padding: 9px 14px; font-size: 13px; font-weight: 600; color: #475569; border-bottom: 1px solid #e2e8f0;">
+                                Email
                               </td>
-                              <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9; font-size: 14px; font-weight: 600;">
+                              <td style="padding: 9px 14px; font-size: 13px; color: #0284c7; border-bottom: 1px solid #e2e8f0;">
                                 <a href="mailto:${submission.email}" style="color: #0284c7; text-decoration: none;">${submission.email}</a>
                               </td>
                             </tr>
-                            <tr>
-                              <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; font-weight: 600; color: #64748b;">
-                                📞 Phone Number
+                            <tr style="background-color: #f8fafc;">
+                              <td style="padding: 9px 14px; font-size: 13px; font-weight: 600; color: #475569;">
+                                Phone
                               </td>
-                              <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9; font-size: 14px; font-weight: 600; color: #334155;">
+                              <td style="padding: 9px 14px; font-size: 13px; color: #0f172a;">
                                 ${
                                   submission.phone
-                                    ? `<a href="tel:${submission.phone}" style="color: #0284c7; text-decoration: none;">${submission.phone}</a>`
-                                    : `<span style="color: #94a3b8; font-style: italic;">Not provided</span>`
+                                    ? `<a href="tel:${submission.phone}" style="color: #0f172a; text-decoration: none;">${submission.phone}</a>`
+                                    : `<span style="color: #94a3b8;">Not provided</span>`
                                 }
-                              </td>
-                            </tr>
-                            <tr>
-                              <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; font-weight: 600; color: #64748b;">
-                                📌 Subject
-                              </td>
-                              <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9; font-size: 14px;">
-                                <span style="background-color: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; display: inline-block;">
-                                  ${submission.subject}
-                                </span>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td style="padding: 8px 0; font-size: 13px; font-weight: 600; color: #64748b;">
-                                🕒 Date & Time
-                              </td>
-                              <td style="padding: 8px 0; font-size: 13px; color: #475569;">
-                                ${formattedDate}
                               </td>
                             </tr>
                           </table>
 
                           <!-- Message Card -->
-                          <div style="margin-bottom: 28px;">
-                            <div style="font-size: 14px; font-weight: 700; color: #334155; margin-bottom: 8px;">
-                              💬 Message Content:
+                          <div style="margin-bottom: 24px;">
+                            <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; margin-bottom: 6px;">
+                              Message
                             </div>
-                            <div style="background-color: #ffffff; border: 1px solid #cbd5e1; border-left: 5px solid #0284c7; border-radius: 8px; padding: 18px 20px; font-size: 15px; line-height: 1.6; color: #1e293b; white-space: pre-wrap; font-family: inherit;">${submission.message}</div>
+                            <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-left: 3px solid #0f172a; border-radius: 4px; padding: 14px 16px; font-size: 14px; line-height: 1.6; color: #334155; white-space: pre-wrap;">${submission.message}</div>
                           </div>
 
-                          <!-- Reply Call to Action Button -->
-                          <div style="text-align: center; margin: 30px 0 10px 0;">
-                            <a href="mailto:${submission.email}?subject=${replySubject}" style="display: inline-block; background: linear-gradient(135deg, #0284c7 0%, #1e40af 100%); color: #ffffff; font-size: 15px; font-weight: 700; text-decoration: none; padding: 14px 32px; border-radius: 30px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);">
-                              ✉️ Reply directly to ${submission.name}
+                          <!-- Reply Action Button -->
+                          <div style="margin-top: 24px;">
+                            <a href="mailto:${submission.email}?subject=${replySubject}" style="display: inline-block; background-color: #0f172a; color: #ffffff; font-size: 13px; font-weight: 600; text-decoration: none; padding: 10px 20px; border-radius: 6px;">
+                              Reply to ${submission.name}
                             </a>
                           </div>
 
@@ -214,13 +189,8 @@ export const submitContact = async (req, res) => {
 
                       <!-- Footer -->
                       <tr>
-                        <td style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 20px 28px; text-align: center;">
-                          <p style="margin: 0 0 6px 0; font-size: 12px; font-weight: 600; color: #64748b;">
-                            VM Solutiions — IT Infrastructure & Software Solutions
-                          </p>
-                          <p style="margin: 0; font-size: 11px; color: #94a3b8;">
-                            This message was automatically delivered to <strong style="color: #475569;">${recipientEmail}</strong> via the VM Solutiions Website Contact API.
-                          </p>
+                        <td style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 16px 28px; font-size: 11px; color: #64748b; line-height: 1.5;">
+                          This notification was automatically sent to <span style="color: #334155; font-weight: 600;">${recipientEmail}</span> from the VM Solutiions website contact system.
                         </td>
                       </tr>
 

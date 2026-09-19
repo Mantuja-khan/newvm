@@ -103,7 +103,7 @@ const FAQS = [
 ];
 function HomePage() {
   const [heroIdx, setHeroIdx] = useState(0);
-  const [homeReviews, setHomeReviews] = useState(TESTIMONIALS);
+  const [homeReviews, setHomeReviews] = useState([]);
   const active = HERO_SLIDES[heroIdx] ?? HERO_SLIDES[0];
   useEffect(() => {
     const fetchHomeReviews = async () => {
@@ -111,12 +111,12 @@ function HomePage() {
         const res = await fetch(`${API_BASE}/reviews`);
         if (res.ok) {
           const data = await res.json();
-          if (data && data.length > 0) {
-            setHomeReviews([...data, ...TESTIMONIALS]);
+          if (Array.isArray(data) && data.length > 0) {
+            setHomeReviews(data);
           }
         }
       } catch (err) {
-        console.log("Could not load reviews from backend, using defaults.");
+        console.error("Could not load reviews from MongoDB:", err);
       }
     };
     fetchHomeReviews();

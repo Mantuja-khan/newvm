@@ -45,6 +45,8 @@ function HardwareDetailPage() {
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
 
+  const [relatedProducts, setRelatedProducts] = useState([]);
+
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -54,18 +56,25 @@ function HardwareDetailPage() {
           const data = await res.json();
           if (data && !data.error && data.name) {
             setProduct(data);
-            return;
+          }
+        }
+
+        // Fetch related products from MongoDB
+        const allRes = await fetch(`${API_BASE}/products`);
+        if (allRes.ok) {
+          const allData = await allRes.json();
+          if (Array.isArray(allData)) {
+            const related = allData
+              .filter((p) => p.id !== id && (p.type === "hardware" || ["laptops", "desktops", "workstations", "accessories"].includes(p.cat)))
+              .slice(0, 3);
+            setRelatedProducts(related);
           }
         }
       } catch (err) {
-        console.log("Error fetching hardware product from backend, trying static list.");
+        console.error("Error fetching hardware product from MongoDB:", err);
+      } finally {
+        setLoading(false);
       }
-
-      const found = PRODUCTS.find(
-        (p) => p.id === id || p.name.toLowerCase().replace(/[^a-z0-9]+/g, "-") === id,
-      );
-      if (found) setProduct(found);
-      setLoading(false);
     };
     fetchProduct();
   }, [id]);
@@ -136,10 +145,6 @@ function HardwareDetailPage() {
   const whatsappMsg = encodeURIComponent(
     `Hello VM Solutiions, I am interested in purchasing:\n\n*Product:* ${product.name}\n*Price:* ${product.price}\n*MRP:* ${product.originalPrice || ""}\n*Condition:* ${product.condition || "Refurbished"}\n\nPlease confirm availability and share details.`,
   );
-
-  const relatedProducts = PRODUCTS.filter(
-    (p) => (p.cat === product.cat || p.type === product.type) && p.name !== product.name,
-  ).slice(0, 3);
 
   const displayFeatures =
     typeof product.features === "string"

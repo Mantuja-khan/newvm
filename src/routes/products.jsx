@@ -18,22 +18,24 @@ export const Route = createFileRoute("/products")({
   component: ProductsPage,
 });
 function ProductsPage() {
-  const [productList, setProductList] = useState(PRODUCTS);
+  const [productList, setProductList] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        setLoading(true);
         const res = await fetch(`${API_BASE}/products`);
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data)) {
-            const combinedMap = new Map();
-            PRODUCTS.forEach((p) => combinedMap.set(p.id || p.name, p));
-            data.forEach((p) => combinedMap.set(p.id || p.name, p));
-            setProductList(Array.from(combinedMap.values()));
+            setProductList(data);
           }
         }
       } catch (err) {
-        console.log("Could not load products from backend, using defaults.");
+        console.error("Error loading products from MongoDB:", err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchProducts();

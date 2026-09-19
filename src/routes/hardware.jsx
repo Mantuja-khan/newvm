@@ -22,37 +22,31 @@ export const Route = createFileRoute("/hardware")({
 });
 
 function HardwareProductsPage() {
-  const defaultHw = PRODUCTS.filter(
-    (p) =>
-      p.type === "hardware" ||
-      ["laptops", "desktops", "workstations", "accessories"].includes(p.cat),
-  );
-  const [productList, setProductList] = useState(defaultHw);
+  const [productList, setProductList] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        setLoading(true);
         const res = await fetch(`${API_BASE}/products`);
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data)) {
-            const combinedMap = new Map();
-            defaultHw.forEach((p) => combinedMap.set(p.id || p.name, p));
-            data.forEach((p) => {
-              if (
+            const hwData = data.filter(
+              (p) =>
                 p.type === "hardware" ||
-                ["laptops", "desktops", "workstations", "accessories"].includes(p.cat)
-              ) {
-                combinedMap.set(p.id || p.name, p);
-              }
-            });
-            setProductList(Array.from(combinedMap.values()));
+                ["laptops", "desktops", "workstations", "accessories"].includes(p.cat),
+            );
+            setProductList(hwData);
           }
         }
       } catch (err) {
-        console.log("Could not load hardware products from backend, using defaults.");
+        console.error("Error loading hardware products from MongoDB:", err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchProducts();

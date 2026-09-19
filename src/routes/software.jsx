@@ -142,36 +142,33 @@ const BUSY_PRICING_TABLE = [
   },
 ];
 function SoftwareProductsPage() {
-  const defaultSw = PRODUCTS.filter(
-    (p) => p.type === "software" || p.type === "cloud" || ["software", "cloud"].includes(p.cat),
-  );
-  const [productList, setProductList] = useState(defaultSw);
+  const [productList, setProductList] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("catalog");
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        setLoading(true);
         const res = await fetch(`${API_BASE}/products`);
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data)) {
-            const combinedMap = new Map();
-            defaultSw.forEach((p) => combinedMap.set(p.id || p.name, p));
-            data.forEach((p) => {
-              if (
+            const swData = data.filter(
+              (p) =>
                 p.type === "software" ||
                 p.type === "cloud" ||
-                ["software", "cloud"].includes(p.cat)
-              ) {
-                combinedMap.set(p.id || p.name, p);
-              }
-            });
-            setProductList(Array.from(combinedMap.values()));
+                ["software", "cloud", "tally", "busy"].includes(p.cat),
+            );
+            setProductList(swData);
           }
         }
       } catch (err) {
-        console.log("Could not load software products from backend, using defaults.");
+        console.error("Error fetching software products from MongoDB:", err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchProducts();

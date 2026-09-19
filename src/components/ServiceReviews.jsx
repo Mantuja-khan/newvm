@@ -29,12 +29,12 @@ export function ServiceReviews({ slug, serviceTitle }) {
       const res = await fetch(`${API_BASE}/reviews?slug=${slug}`);
       if (res.ok) {
         const data = await res.json();
-        setReviews(data);
-      } else {
-        setReviews(loadReviews(slug));
+        if (Array.isArray(data)) {
+          setReviews(data);
+        }
       }
     } catch (e) {
-      setReviews(loadReviews(slug));
+      console.error("Error fetching reviews from MongoDB:", e);
     }
   };
 
@@ -63,27 +63,13 @@ export function ServiceReviews({ slug, serviceTitle }) {
       if (res.ok) {
         const newReview = await res.json();
         setReviews((prev) => [newReview, ...prev]);
-        const currentLocal = loadReviews(slug);
-        localStorage.setItem(storageKey(slug), JSON.stringify([newReview, ...currentLocal]));
-      } else {
-        throw new Error("Backend POST failed");
+        setName("");
+        setText("");
+        setRating(5);
       }
     } catch (error) {
-      const next = {
-        id: crypto.randomUUID(),
-        name: name.trim(),
-        rating,
-        text: text.trim(),
-        date: new Date().toISOString(),
-      };
-      const updated = [next, ...reviews];
-      setReviews(updated);
-      localStorage.setItem(storageKey(slug), JSON.stringify(updated));
+      console.error("Error submitting review to MongoDB:", error);
     }
-
-    setName("");
-    setText("");
-    setRating(5);
   };
 
   const avg =

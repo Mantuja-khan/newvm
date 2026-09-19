@@ -114,11 +114,11 @@ function AdminPage() {
       const dbRes = await fetch(`${API_BASE}/db-status`);
       if (dbRes.ok) setDbStatus(await dbRes.json());
     } catch (err) {
-      console.log("Backend offline, using static initial datasets.");
+      console.error("Backend error loading MongoDB datasets:", err);
       setDbStatus({
         connected: false,
-        statusText: "Offline / JSON Fallback Mode",
-        host: "Local File DB",
+        statusText: "Disconnected / Server Error",
+        host: "MongoDB Atlas",
       });
     }
   };
