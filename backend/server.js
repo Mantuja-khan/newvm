@@ -23,28 +23,52 @@ dotenv.config({ path: path.join(__dirname, "..", ".env") });
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-const allowedOrigins = [
+const envOrigins = process.env.CLIENT_ORIGIN
+  ? process.env.CLIENT_ORIGIN.split(",").map((o) => o.trim())
+  : [];
+
+const defaultOrigins = [
   "https://vmsolutiions.com",
   "https://www.vmsolutiions.com",
-  "https://vmsolutiions.com",
-  "https://www.vmsolutiions.com",
+  "https://api.vmsolutiions.com",
+  "http://vmsolutiions.com",
+  "http://www.vmsolutiions.com",
+  "http://localhost:8080",
   "http://localhost:8081",
   "http://localhost:5173",
+  "http://localhost:3000",
+  "http://localhost:8003",
+  "http://localhost:5001",
 ];
+
+const allowedOrigins = Array.from(new Set([...defaultOrigins, ...envOrigins]));
 
 app.use(
   cors({
     origin: function (origin, callback) {
       if (!origin) return callback(null, true);
 
-      if (allowedOrigins.includes(origin)) {
+      const isAllowed =
+        allowedOrigins.includes(origin) ||
+        origin.endsWith("vmsolutiions.com") ||
+        origin.includes("localhost") ||
+        origin.includes("127.0.0.1");
+
+      if (isAllowed) {
         callback(null, true);
       } else {
-        callback(new Error("Not allowed by CORS"));
+        callback(new Error(`Origin ${origin} not allowed by CORS`));
       }
     },
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "x-admin-token", "Origin", "Accept", "X-Requested-With"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "x-admin-token",
+      "Origin",
+      "Accept",
+      "X-Requested-With",
+    ],
     credentials: true,
   })
 );
