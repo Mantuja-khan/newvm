@@ -60,7 +60,7 @@ function ContactPage() {
     setLoading(true);
     setStatus(null);
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 6000);
+    const timer = setTimeout(() => controller.abort(), 15000);
     try {
       const res = await fetch(`${API_BASE}/contact`, {
         method: "POST",
@@ -70,7 +70,7 @@ function ContactPage() {
       });
       clearTimeout(timer);
       const resData = await res.json().catch(() => ({}));
-      if (res.ok || resData.success) {
+      if (res.ok && resData.success !== false) {
         setStatus({
           type: "success",
           message:
@@ -93,15 +93,8 @@ function ContactPage() {
     } catch (err) {
       clearTimeout(timer);
       setStatus({
-        type: "success",
-        message: "Thank you! Your message has been received. Our team will contact you shortly.",
-      });
-      setFormData({
-        fullName: "",
-        emailAddress: "",
-        phoneNumber: "",
-        messageSubject: "",
-        messageContent: "",
+        type: "error",
+        message: "Unable to reach server. Please check your connection or contact us directly on WhatsApp.",
       });
     } finally {
       setLoading(false);

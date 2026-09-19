@@ -23,55 +23,94 @@ dotenv.config({ path: path.join(__dirname, "..", ".env") });
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-const envOrigins = process.env.CLIENT_ORIGIN
-  ? process.env.CLIENT_ORIGIN.split(",").map((o) => o.trim())
-  : [];
-
-const defaultOrigins = [
+const allowedOrigins = [
   "https://vmsolutiions.com",
   "https://www.vmsolutiions.com",
   "https://api.vmsolutiions.com",
-  "http://vmsolutiions.com",
-  "http://www.vmsolutiions.com",
-  "http://localhost:8080",
-  "http://localhost:8081",
   "http://localhost:5173",
   "http://localhost:3000",
-  "http://localhost:8003",
   "http://localhost:5001",
+  "http://localhost:8003",
+  "http://127.0.0.1:5173",
+  "http://127.0.0.1:3000",
+  "http://127.0.0.1:5001",
+  "http://127.0.0.1:8003",
 ];
 
-const allowedOrigins = Array.from(new Set([...defaultOrigins, ...envOrigins]));
+if (process.env.CLIENT_ORIGIN) {
+  process.env.CLIENT_ORIGIN.split(",").forEach((origin) => {
+    const trimmed = origin.trim();
+    if (trimmed && !allowedOrigins.includes(trimmed)) {
+      allowedOrigins.push(trimmed);
+    }
+  });
+}
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin) return callback(null, true);
+const isAllowedOrigin = (origin) => {
+  if (!origin) return true;
+  if (allowedOrigins.includes(origin)) return true;
+  try {
+    const url = new URL(origin);
+    const host = url.hostname.toLowerCase();
+    if (
+      host === "vmsolutiions.com" ||
+      host.endsWith(".vmsolutiions.com") ||
+      host === "localhost" ||
+      host === "127.0.0.1"
+    ) {
+      return true;
+    }
+  } catch {
+    // fallback if url parse fails
+  }
+  return false;
+};
 
-      const isAllowed =
-        allowedOrigins.includes(origin) ||
-        origin.endsWith("vmsolutiions.com") ||
-        origin.includes("localhost") ||
-        origin.includes("127.0.0.1");
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (isAllowedOrigin(origin)) {
+      callback(null, true);
+    } else {
+      callback(null, false);
+    }
+  },
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "x-admin-token",
+    "Origin",
+    "Accept",
+    "X-Requested-With",
+  ],
+  exposedHeaders: ["Content-Range", "X-Content-Range"],
+  credentials: true,
+  optionsSuccessStatus: 200,
+  maxAge: 86400,
+};
 
-      if (isAllowed) {
-        callback(null, true);
-      } else {
-        callback(new Error(`Origin ${origin} not allowed by CORS`));
-      }
-    },
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "x-admin-token",
-      "Origin",
-      "Accept",
-      "X-Requested-With",
-    ],
-    credentials: true,
-  })
-);
+app.use(cors(corsOptions));
+
+// Explicit CORS headers and preflight handling middleware
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin && isAllowedOrigin(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD"
+    );
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization, x-admin-token, Origin, Accept, X-Requested-With"
+    );
+  }
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+  next();
+});
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
